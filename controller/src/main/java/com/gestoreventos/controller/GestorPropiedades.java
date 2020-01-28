@@ -17,9 +17,9 @@ public class GestorPropiedades {
 //    p.setProperty("urlbd", "jdbc:postgresql://localhost:5432/gestor");
             p.setProperty("urlbd", "jdbc:postgresql://localhost:5432/gestorEventosDEV");
 
-            //p.setProperty("controlador", "org.postgresql.Driver");
-            //p.setProperty("usuario", "postgres");
-//    p.setProperty("clave", "postgres");
+            p.setProperty("controlador", "org.postgresql.Driver");
+            p.setProperty("usuario", "postgres");
+//     p.setProperty("clave", "postgres");
            // p.setProperty("rutaAdjunto", "c:\\gestor\\archivos");
             //p.setProperty("rutaTemporal", "c:\\gestor\\tmp");
             //p.setProperty("rutaEliminado", "c:\\gestor\\eliminados");            
