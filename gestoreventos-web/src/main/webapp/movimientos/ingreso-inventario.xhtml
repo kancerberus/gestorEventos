@@ -1,0 +1,128 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"                
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"                
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="/template.xhtml"
+                >
+
+    <ui:define name="content">
+        <h:form enctype="multipart/form-data" id="formInventario" style="font-size: small;">
+            <p:panel id="panelInventario"  header="Administrar Estado De Inventario" >
+                <h:panelGrid columns="5" >
+                    <h:outputText value="Articulo" style="font-weight: bolder"/>                    
+                    <h:outputText value="Estado Articulo" style="font-weight: bolder"/>
+                    <h:outputText value="Ubicacion:" style="font-weight: bolder"/>     
+                    <h:outputText value="Observaciones" style="font-weight: bolder"/>                    
+                    <h:outputText value="Estado" style="font-weight: bolder"/>                    
+                    
+                    <p:selectOneMenu id="advanced" value="#{uiMovimientos.inventario.articulo}" converter="convertidorGenerico" panelStyle="width:180px"
+                                effect="fade" var="articulo" style="width:160px" filter="true" filterMatchMode="startsWith">
+                        <f:selectItem itemLabel="Seleccione..." itemValue="" /> 
+                        <f:selectItems value="#{uiMovimientos.articulosList}" var="art" itemLabel="#{art.codArticulo}" itemValue="#{art}" />
+
+                        <p:column style="width:10%">
+                            <f:facet name="header">
+                               <h:outputText value="Cod Articulo"/>
+                            </f:facet>
+                            <h:outputText value="#{articulo.codArticulo}" />
+                        </p:column>
+
+                        <p:column>
+                           <f:facet name="header">
+                               <h:outputText value="Nombre"/>
+                            </f:facet>
+                            <h:outputText value="#{articulo.descripcion}" />
+                        </p:column>
+
+                        <f:facet name="footer">
+                           <p:separator />
+                           <h:outputText value="#{uiMovimientos.articulosList.size} Articulos" style="font-weight:bold;"/>
+                        </f:facet>
+                    </p:selectOneMenu>
+                    
+                    <p:selectOneMenu id="somItemsEstado" value="#{uiMovimientos.inventario.edoArticulo}" converter="convertidorGenerico"
+                                     style="text-align: center;width: 180px;">  
+                        <f:selectItem itemLabel="Seleccione..." itemValue="" /> 
+                        <f:selectItems value="#{uiMovimientos.estadoArticuloList}" var="ea" itemLabel="#{ea.nombre}" itemValue="#{ea}"/>
+                    </p:selectOneMenu>
+                    
+                    <p:selectOneMenu id="somItemsUbicaciones" value="#{uiMovimientos.inventario.ubicacion}" converter="convertidorGenerico"
+                                     style="text-align: center;width: 180px;">  
+                        <f:selectItem itemLabel="Seleccione..." itemValue="" /> 
+                        <f:selectItems value="#{uiMovimientos.ubicacionesList}" var="u" itemLabel="#{u.nombre}" itemValue="#{u}"/>
+                    </p:selectOneMenu>
+
+                    <p:inputText value="#{uiMovimientos.inventario.observacion}" placeholder="Observacion" style="width: 180px"/>                    
+                    <p:selectBooleanButton id="value1" value="#{uiMovimientos.inventario.estado}" onLabel="Activo" offLabel="Inactivo" style="width:60px" />
+                </h:panelGrid>
+                
+                <br>
+                    
+                </br>
+
+                <h:panelGrid columns="2">
+                    <p:commandButton value="Crear / Modificar" action="#{uiMovimientos.guardarArticulo()}"
+                                     icon="ui-icon-disk"
+                                     update="formInventario"/>
+                    
+                </h:panelGrid>  
+                
+                <p:dataTable  value="#{uiMovimientos.inventariosList}" var="varInventario" emptyMessage="No hay Articulos" 
+                              rowStyleClass="Centro" style="font-size: 10px">
+
+                    <p:columnGroup type="header"  >  
+                        <p:row>  
+                            <p:column   headerText="Opciones" style="width: 100px"/>
+                            <p:column headerText="Articulo"  filterBy="#{varInventario.articulo.codArticulo}"  style="width: 50px"/>                            
+                            <p:column headerText="Descripcion Articulo"  filterBy="#{varInventario.articulo.descripcion}" style="width: 300px"  />                            
+                            <p:column  headerText="Ubicacion" style="width: 150px"/>
+                            <p:column  headerText="Estado Articulo" style="width: 150px"/>
+                            <p:column  headerText="Observacion"  style="width: 300px"/>
+                            <p:column  headerText="Estado" style="width: 150px"/>                            
+                            
+                                                                                 
+                        </p:row> 
+                    </p:columnGroup>
+
+                    <p:column>
+                        <p:commandButton icon="ui-icon-pencil" title="Modificar Inventario" update="formInventario"
+                                         action="#{uiMovimientos.subirInventario()}" />                    
+                        <p:commandButton icon="ui-icon-trash" title="Eliminar Inventario" update="formInventario"
+                                         action="#{uiMovimientos.eliminarInventario()}" />
+                    </p:column>
+                    <p:column >
+                        <h:outputText value="#{varInventario.articulo.codArticulo}" />
+                    </p:column>
+                    <p:column >
+                        <h:outputText value="#{varInventario.articulo.descripcion}" />
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{varInventario.ubicacion.nombre}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{varInventario.edoArticulo.nombre}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{varInventario.observacion}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{varInventario.estado ? 'Activo':'Inactivo'}"/>
+                    </p:column>
+                    
+                </p:dataTable>
+
+            </p:panel>
+
+            <p:dialog id="dialog" widgetVar="dialog" header="#{dialogo.header}" showEffect="#{dialogo.effect}" hideEffect="#{dialogo.effect}"
+                      onHide="limpiarModal()">
+                <ui:include src="#{dialogo.src}"/>
+            </p:dialog>
+            <p:remoteCommand name="limpiarModal" action="#{uiSesion.limpiarDialogo()}" update="dialog" />
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

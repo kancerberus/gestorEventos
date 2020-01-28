@@ -1,0 +1,145 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.gestoreventos.movimientos;
+
+import com.gestoreventos.publico.*;
+import java.io.Serializable;
+import java.util.Date;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+
+import javax.persistence.Table;
+
+/**
+ *
+ * @author fjvc
+ */
+@Entity
+@Table(name = "inventario")
+@NamedQueries({
+    @NamedQuery(name = "Inventario.findAll", query = "SELECT inv FROM Inventario inv")})
+public class Inventario implements Serializable, Cloneable {
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @Basic(optional = false)
+    @Column(name = "cod_articulo")
+    private Integer codArticulo;        
+    private Marca marca=new Marca();
+    @Column(name = "observacion")
+    private String observacion;
+    @Column(name = "estado")    
+    private Boolean estado;
+    private Articulo articulo=new Articulo();
+    private Ubicacion ubicacion=new Ubicacion();
+    private EstadoArticulo edoArticulo=new EstadoArticulo();
+    
+    
+    public Inventario() {        
+        
+    }
+
+    public Inventario(Integer codArticulo, String observacion, Boolean estado) {
+        this.codArticulo = codArticulo;
+        this.observacion = observacion;
+        this.estado = estado;
+    }
+    
+    
+
+    public Articulo getArticulo() {
+        return articulo;
+    }
+
+    public void setArticulo(Articulo articulo) {
+        this.articulo = articulo;
+    }
+
+    public Ubicacion getUbicacion() {
+        return ubicacion;
+    }
+
+    public void setUbicacion(Ubicacion ubicacion) {
+        this.ubicacion = ubicacion;
+    }
+
+    public EstadoArticulo getEdoArticulo() {
+        return edoArticulo;
+    }
+
+    public void setEdoArticulo(EstadoArticulo edoArticulo) {
+        this.edoArticulo = edoArticulo;
+    }
+    
+    
+
+    public Boolean getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Boolean estado) {
+        this.estado = estado;
+    }
+
+    public String getObservacion() {
+        return observacion;
+    }
+
+    public void setObservacion(String observacion) {
+        this.observacion = observacion;
+    }
+    
+    public Marca getMarca() {
+        return marca;
+    }
+
+    public void setMarca(Marca marca) {
+        this.marca = marca;
+    }    
+
+    public Integer getCodArticulo() {
+        return codArticulo;
+    }
+
+    public void setCodArticulo(Integer codArticulo) {
+        this.codArticulo = codArticulo;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (codArticulo != null ? codArticulo.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof Inventario)) {
+            return false;
+        }
+        Inventario other = (Inventario) object;
+        if ((this.codArticulo == null && other.codArticulo != null) || (this.codArticulo != null && !this.codArticulo.equals(other.codArticulo))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "com.gestoreventos.movimientos.inventario[ cod_articulo=" + codArticulo + " ]";
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone(); //To change body of generated methods, choose Tools | Templates.
+    }
+
+}

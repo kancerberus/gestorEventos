@@ -1,0 +1,93 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"                
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"                
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="/template.xhtml"
+                >
+
+    <ui:define name="content">
+        <h:form enctype="multipart/form-data" id="formProveedores" style="font-size: small;">
+            <p:panel id="panelProveedores"  header="Administrar Proveedores" >
+                <h:panelGrid columns="3" >
+                    <h:outputText value="Nombre Proveedor:" style="font-weight: bolder"/>
+                    <h:outputText value="Direccion" style="font-weight: bolder"/>
+                    <h:outputText value="Telefono" style="font-weight: bolder"/>
+                    
+                    <p:inputText value="#{uiProveedor.proveedor.nombre}" placeholder="Nombre Ubicacion"/>                    
+                    <p:inputText value="#{uiProveedor.proveedor.direccion}" placeholder="Direccion"/>
+                    <p:inputText value="#{uiProveedor.proveedor.telefono}" placeholder="Telefono"/>
+                    
+                    <h:outputText value="Nombre Encargado" style="font-weight: bolder"/>                    
+                    <h:outputText value="Telefono Encargado " style="font-weight: bolder"/>                    
+                    <h:outputText value="" style="font-weight: bolder"/>                    
+                    
+                    <p:inputText value="#{uiProveedor.proveedor.nomEncargado}" placeholder="Nombre Encargado"/>
+                    <p:inputText value="#{uiProveedor.proveedor.tel_encargado}" placeholder="Telefono Encargado"/>
+                    
+                    
+                </h:panelGrid>
+                
+                <br>
+                    
+                </br>
+
+                <h:panelGrid columns="2">
+                    <p:commandButton value="Crear / Modificar" action="#{uiProveedor.guardarProveedor()}"
+                                     icon="ui-icon-disk"
+                                     update="formProveedores"/>
+                    
+                </h:panelGrid>
+                <p:dataTable  value="#{uiProveedor.proveedoresList}" var="varProveedor" emptyMessage="No hay Proveedores" 
+                              rowStyleClass="Centro" style="font-size: 10px">
+
+                    <p:columnGroup type="header"  >  
+                        <p:row>  
+                            <p:column   headerText="Opciones" />
+                            <p:column headerText="Nombre Proveedor"  filterBy="#{varProveedor.nombre}"  />                            
+                            <p:column  headerText="Direccion"/>
+                            <p:column  headerText="Telefono"/>
+                            <p:column  headerText="Nombre Proveedor"/>
+                            <p:column  headerText="Telefono Proveedor"/>
+                            
+                                                                                 
+                        </p:row> 
+                    </p:columnGroup>
+
+                    <p:column>
+                        <p:commandButton icon="ui-icon-pencil" title="Modificar Proveedor" update="formProveedores"
+                                         action="#{uiProveedor.subirProveedor()}" />                    
+                        <p:commandButton icon="ui-icon-trash" title="Eliminar PRoveedor" update="formProveedores"
+                                         action="#{uiProveedor.eliminarProveedor()}" />
+                    </p:column>
+                    <p:column >
+                        <h:outputText value="#{varProveedor.nombre}" />
+                    </p:column>
+                    <p:column >
+                        <h:outputText value="#{varProveedor.direccion}" />
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{varProveedor.telefono}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{varProveedor.nomEncargado}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{varProveedor.tel_encargado}"/>
+                    </p:column>
+                </p:dataTable>
+
+            </p:panel>
+
+            <p:dialog id="dialog" widgetVar="dialog" header="#{dialogo.header}" showEffect="#{dialogo.effect}" hideEffect="#{dialogo.effect}"
+                      onHide="limpiarModal()">
+                <ui:include src="#{dialogo.src}"/>
+            </p:dialog>
+            <p:remoteCommand name="limpiarModal" action="#{uiSesion.limpiarDialogo()}" update="dialog" />
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

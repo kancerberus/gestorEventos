@@ -1,0 +1,117 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"                
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"                
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="/template.xhtml"
+                >
+
+    <ui:define name="content">
+        <h:form enctype="multipart/form-data" id="formEmpleados" style="font-size: small;">
+            <p:panel id="panelEmpleados"  header="Administrar Empleados" >
+                <h:panelGrid columns="4" >
+                    <h:outputText value="Cedula" style="font-weight: bolder"/>
+                    <h:outputText value="Nombres" style="font-weight: bolder"/>
+                    <h:outputText value="Apellidos" style="font-weight: bolder"/>
+                    <h:outputText value="Cargo" style="font-weight: bolder"/>
+                    
+                    <p:inputMask mask="9?9999999999" value="#{uiEmpleado.empleado.cedula}" placeholder="Cedula" />
+                    <p:inputText value="#{uiEmpleado.empleado.nombre}" placeholder="Nombres"/>
+                    <p:inputText value="#{uiEmpleado.empleado.apellido}" placeholder="Apellidos"/>                    
+                    <p:selectOneMenu id="somItemsMunicipios" value="#{uiEmpleado.empleado.cargo}" converter="convertidorGenerico"
+                                     style="text-align: center;width: 180px;">  
+                        <f:selectItem itemLabel="Seleccione..." itemValue="" /> 
+                        <f:selectItems value="#{uiEmpleado.cargosList}" var="carg" itemLabel="#{carg.nombre}" itemValue="#{carg}"/>
+                    </p:selectOneMenu>
+                    
+                    
+                    
+                    <h:outputText value="Correo" style="font-weight: bolder"/>
+                    <h:outputText value="Telefono" style="font-weight: bolder"/>
+                    <h:outputText value="Fecha Nacimiento" style="font-weight: bolder"/>
+                    <h:outputText value="Genero" style="font-weight: bolder"/>
+                    
+                    <p:inputText value="#{uiEmpleado.empleado.correo}" placeholder="Correo"/>
+                    <p:inputMask mask="9?9999999999" value="#{uiEmpleado.empleado.telefono}" placeholder="Telefono" />
+                    <p:calendar value="#{uiEmpleado.empleado.fechaNac}" placeholder="Fecha Nacimiento" pattern="dd-MM-yyyy"/>                    
+                    <p:selectOneRadio id="console" value="#{uiEmpleado.empleado.genero}" >
+                        <f:selectItem itemLabel="M" itemValue="M" />
+                        <f:selectItem itemLabel="F" itemValue="F" />                        
+                    </p:selectOneRadio>
+                </h:panelGrid>
+                
+                <br>
+                    
+                </br>
+
+                <h:panelGrid columns="2">
+                    <p:commandButton value="Crear / Modificar" action="#{uiEmpleado.guardarEmpleado()}"
+                                     icon="ui-icon-disk"
+                                     update="formEmpleados"/>
+                    
+                </h:panelGrid>
+                <p:dataTable  value="#{uiEmpleado.empleadosList}" var="varEmpleado" emptyMessage="No hay Empleados" 
+                              rowStyleClass="Centro"  style="font-size: 10px">
+
+                    <p:columnGroup type="header" >  
+                        <p:row>  
+                            <p:column   headerText="Opciones" />
+                            <p:column headerText="Cedula" filterBy="#{varEmpleado.cedula}" />
+                            <p:column  headerText="Nombres"/>
+                            <p:column  headerText="Apellidos"/>
+                            <p:column  headerText="Cargo"/>
+                            <p:column  headerText="Feha Nacimiento"/>   
+                            <p:column  headerText="Telefono" />
+                            <p:column  headerText="Correo" />
+                            <p:column  headerText="Genero" />
+                                                                                 
+                        </p:row> 
+                    </p:columnGroup>
+
+                    <p:column>
+                        <p:commandButton icon="ui-icon-pencil" title="Modificar Empleado" update="formEmpleados"
+                                         action="#{uiEmpleado.subirEmpleado()}" />                    
+                        <p:commandButton icon="ui-icon-trash" title="Eliminar Empleado" update="formEmpleados"
+                                         action="#{uiEmpleado.eliminarEmpleado()}" />
+                    </p:column>
+                    <p:column >
+                        <h:outputText value="#{varEmpleado.cedula}" />
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{varEmpleado.nombre}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{varEmpleado.apellido}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{varEmpleado.cargo.nombre}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{varEmpleado.fechaNac}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{varEmpleado.telefono}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{varEmpleado.correo}"/>
+                    </p:column>                    
+                    <p:column>
+                        <h:outputText value="#{varEmpleado.genero}"/>
+                    </p:column>
+                    
+                </p:dataTable>
+
+            </p:panel>
+
+            <p:dialog id="dialog" widgetVar="dialog" header="#{dialogo.header}" showEffect="#{dialogo.effect}" hideEffect="#{dialogo.effect}"
+                      onHide="limpiarModal()">
+                <ui:include src="#{dialogo.src}"/>
+            </p:dialog>
+            <p:remoteCommand name="limpiarModal" action="#{uiSesion.limpiarDialogo()}" update="dialog" />
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

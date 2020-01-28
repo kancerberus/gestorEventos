@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"                
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"                
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="/template.xhtml"
+                >
+
+    <ui:define name="content">
+        <h:form enctype="multipart/form-data" id="formClientes" style="font-size: small;">
+            <p:panel id="panelClientes"  header="Administrar Clientes" >
+                <h:panelGrid columns="5" >
+                    <h:outputText value="Nit" style="font-weight: bolder"/>
+                    <h:outputText value="Nombre" style="font-weight: bolder"/>
+                    <h:outputText value="Direccion" style="font-weight: bolder"/>
+                    <h:outputText value="Telefono" style="font-weight: bolder"/>
+                    <h:outputText value="Correo" style="font-weight: bolder"/>
+                    <p:inputMask mask="9?9999999999" value="#{uiCliente.cliente.nit }" placeholder="Nit" />
+                    <p:inputText value="#{uiCliente.cliente.nombre}" placeholder="Nombre"/>
+                    <p:inputText value="#{uiCliente.cliente.direccion}" placeholder="Direccion"/>                    
+                    <p:inputMask mask="9?9999999999" value="#{uiCliente.cliente.telefono}" placeholder="Telefono" />                    
+                    <p:inputText value="#{uiCliente.cliente.correo}" placeholder="Correo"/>                                        
+                    
+                    
+                    <h:outputText value="Nombre Contacto" style="font-weight: bolder"/>
+                    <h:outputText value="Telefono Contacto" style="font-weight: bolder"/>                    
+                    <h:outputText style="font-weight: bolder"/>                    
+                    <h:outputText style="font-weight: bolder"/>                    
+                    <h:outputText style="font-weight: bolder"/>                    
+                    
+                    <p:inputText value="#{uiCliente.cliente.nomContacto}" placeholder="Nombre Contacto"/>                    
+                    <p:inputMask mask="9?9999999999" value="#{uiCliente.cliente.telContacto}" placeholder="Telefono Contacto" />                   
+                    
+                </h:panelGrid>
+                
+                <br>
+                    
+                </br>
+
+                <h:panelGrid columns="2">
+                    <p:commandButton value="Crear / Modificar" action="#{uiCliente.guardarCliente()}"
+                                     icon="ui-icon-disk"
+                                     update="formClientes"/>
+                    
+                </h:panelGrid>
+                <p:dataTable  value="#{uiCliente.clientesList}" var="varCliente" emptyMessage="No hay Clientes" 
+                              rowStyleClass="Centro" style="font-size: 10px">
+
+                    <p:columnGroup type="header"  >  
+                        <p:row>  
+                            <p:column   headerText="Opciones" />
+                            <p:column headerText="Nit"  filterBy="#{varCliente.nit}"  />
+                            <p:column  headerText="Nombre"/>
+                            <p:column  headerText="Direccion"/>
+                            <p:column  headerText="Telefono"/>
+                            <p:column  headerText="Correo"/>                            
+                            <p:column  headerText="Nombre Contacto"/>
+                            <p:column  headerText="Telefono Contacto"/>
+                            
+                            
+                                                                                 
+                        </p:row> 
+                    </p:columnGroup>
+
+                    <p:column>
+                        <p:commandButton icon="ui-icon-pencil" title="Modificar Cliente" update="formClientes"
+                                         action="#{uiCliente.subirCliente()}" />                    
+                        <p:commandButton icon="ui-icon-trash" title="Eliminar Cliente" update="formClientes"
+                                         action="#{uiCliente.eliminarCliente()}" />
+                    </p:column>
+                    <p:column >
+                        <h:outputText value="#{varCliente.nit}" />
+                    </p:column>
+                    <p:column >
+                        <h:outputText value="#{varCliente.nombre}" />
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{varCliente.direccion}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{varCliente.telefono}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{varCliente.correo}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{varCliente.nomContacto}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{varCliente.telContacto}"/>
+                    </p:column>
+                </p:dataTable>
+
+            </p:panel>
+
+            <p:dialog id="dialog" widgetVar="dialog" header="#{dialogo.header}" showEffect="#{dialogo.effect}" hideEffect="#{dialogo.effect}"
+                      onHide="limpiarModal()">
+                <ui:include src="#{dialogo.src}"/>
+            </p:dialog>
+            <p:remoteCommand name="limpiarModal" action="#{uiSesion.limpiarDialogo()}" update="dialog" />
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>
