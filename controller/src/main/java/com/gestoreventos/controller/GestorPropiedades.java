@@ -17,14 +17,13 @@ public class GestorPropiedades {
 //    p.setProperty("urlbd", "jdbc:postgresql://localhost:5432/gestor");
             p.setProperty("urlbd", "jdbc:postgresql://localhost:5432/gestorEventosDEV");
 
-            p.setProperty("controlador", "org.postgresql.Driver");
-            p.setProperty("usuario", "postgres");
+            //p.setProperty("controlador", "org.postgresql.Driver");
+            //p.setProperty("usuario", "postgres");
 //    p.setProperty("clave", "postgres");
-            p.setProperty("rutaAdjunto", "c:\\gestor\\archivos");
-            p.setProperty("rutaTemporal", "c:\\gestor\\tmp");
-            p.setProperty("rutaEliminado", "c:\\gestor\\eliminados");            
+           // p.setProperty("rutaAdjunto", "c:\\gestor\\archivos");
+            //p.setProperty("rutaTemporal", "c:\\gestor\\tmp");
+            //p.setProperty("rutaEliminado", "c:\\gestor\\eliminados");            
     //p.setProperty("guardarLogos", "D:\\gestor\\gestor-web\\target\\gestor-web-1.0\\resources\\imagenes\\establecimientos");
-            p.setProperty("guardarLogos", "c:\\tomcat9\\webapps\\gestor-web\\resources\\imagenes\\establecimientos\\");  
             p.setProperty("clave", "1234");
 
         } catch (Exception e) {
