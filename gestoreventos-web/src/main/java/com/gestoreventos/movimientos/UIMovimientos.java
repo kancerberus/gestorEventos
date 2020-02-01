@@ -70,7 +70,7 @@ public class UIMovimientos {
         this.cargarUbicacionesList();   
         this.cargarInventariosList();
         this.cargarRazonMovimientosList();
-        this.cargarMantenimientosList();       
+//        this.cargarMantenimientosList();       
         this.cargarListaMenu();
         
         articulo=new Articulo();
@@ -95,7 +95,7 @@ public class UIMovimientos {
         this.cargarEstadosArticuloList();
         this.cargarInventariosList();
         this.cargarRazonMovimientosList();
-        this.cargarMantenimientosList();
+//        this.cargarMantenimientosList();
     }
     
     public void guardarInventario() throws Exception{        
@@ -138,7 +138,7 @@ public class UIMovimientos {
             
     }
     
-    public void guardarMantenimiento(){
+    /*public void guardarMantenimiento(){
         try {
             gestorGeneral=new GestorGeneral();
             gestorMovimiento=new GestorMovimiento();
@@ -159,7 +159,7 @@ public class UIMovimientos {
             UtilMSG.addSupportMsg();
             UtilLog.generarLog(this.getClass(), e);
         }
-    }
+    }*/
     
     
     public void subirMantenimiento(){
@@ -294,7 +294,7 @@ public class UIMovimientos {
         }
     }
     
-    public void cargarMantenimientosList(){
+    /*public void cargarMantenimientosList(){
         try {
             
             mantenimientosList=new ArrayList<>();
@@ -305,7 +305,7 @@ public class UIMovimientos {
             UtilMSG.addSupportMsg();
             UtilLog.generarLog(this.getClass(), e);
         }
-    }
+    }*/
     
     public String cargarSubmenuList(){
         try {
