@@ -6,6 +6,7 @@ package com.gestoreventos.movimientos;
 
 import com.gestoreventos.publico.*;
 import com.gestoreventos.controller.GestorGeneral;
+import com.gestoreventos.entity.Dialogo;
 
 import com.gestoreventos.entity.UtilJSF;
 import com.gestoreventos.entity.UtilLog;
@@ -14,6 +15,7 @@ import com.gestoreventos.movimientos.controlador.GestorMovimiento;
 import com.gestoreventos.publico.controlador.GestorArticulo;
 import com.gestoreventos.publico.controlador.GestorUbicacion;
 import java.util.ArrayList;
+import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
@@ -38,16 +40,23 @@ public class UIMovimientos {
     
     private Articulo articulo;
     private Inventario inventario;
+    private HistoricoMovimientos historicoMovimiento=new HistoricoMovimientos();
     private ArrayList<Articulo> articulosList=new ArrayList<>();
     private ArrayList<Inventario> inventariosList=new ArrayList<>();
+    private ArrayList<HistoricoMovimientos> mantenimientosList=new ArrayList<>();
     private ArrayList<Marca> marcasList=new ArrayList<>();
     private ArrayList<EstadoArticulo> estadoArticuloList=new ArrayList<>();
-    private ArrayList<Ubicacion> ubicacionesList=new ArrayList<>();
+    private ArrayList<Ubicacion> ubicacionesList=new ArrayList<>();    
+    private ArrayList<RazonMovimiento> razonesMovimientoList=new ArrayList<>();    
     
     private GestorArticulo gestorArticulo;
     private GestorMovimiento gestorMovimiento;
     private GestorGeneral gestorGeneral;
+    private Menu menu;
+    private Submenu submenu;
     
+    private ArrayList<Menu> itemsMenu=new ArrayList<>();
+    private ArrayList<Submenu> itemsSubmenu=new ArrayList<>();
     
 
     public void cancelar() {
@@ -60,37 +69,45 @@ public class UIMovimientos {
         this.cargarEstadosArticuloList();
         this.cargarUbicacionesList();   
         this.cargarInventariosList();
+        this.cargarRazonMovimientosList();
+        this.cargarMantenimientosList();       
+        this.cargarListaMenu();
+        
         articulo=new Articulo();
         inventario=new Inventario();
         inventario.setArticulo(new Articulo());
-        inventario.getArticulo().setUbicacion(new Ubicacion());
+        submenu=new Submenu();
         inventario.getArticulo().setEdoArticulo(new EstadoArticulo());
+        historicoMovimiento=new HistoricoMovimientos();
     }
     
     
-    public UIMovimientos() {        
+    public UIMovimientos() {            
+        submenu=new Submenu();
         articulo=new Articulo();
         inventario=new Inventario();
         inventario.setArticulo(new Articulo());
-        inventario.getArticulo().setUbicacion(new Ubicacion());
+        
         inventario.getArticulo().setEdoArticulo(new EstadoArticulo());
+        historicoMovimiento=new HistoricoMovimientos();
+        this.cargarListaMenu();
         this.cargarArticulosList();
         this.cargarEstadosArticuloList();
         this.cargarInventariosList();
-               
-        
+        this.cargarRazonMovimientosList();
+        this.cargarMantenimientosList();
     }
     
-    public void guardarArticulo() throws Exception{        
+    public void guardarInventario() throws Exception{        
         
         try {
             
             gestorMovimiento=new GestorMovimiento();
             gestorArticulo=new GestorArticulo();
-            gestorGeneral=new GestorGeneral();                        
+            gestorGeneral=new GestorGeneral();  
             
             gestorMovimiento.validarInventario(inventario);
-            gestorMovimiento.guardarInventario(inventario);
+//            gestorMovimiento.guardarInventario(inventario);
             
             UtilMSG.addSuccessMsg("Guardado Con Exito");
             inventario=new Inventario();
@@ -105,12 +122,58 @@ public class UIMovimientos {
         
     }
     
+    public void cargarListaMenu(){
+        try {
+            
+            gestorMovimiento=new GestorMovimiento();
+            itemsMenu.clear();
+            
+            itemsMenu.addAll(gestorMovimiento.cargarItemsMenu());
+            
+        } catch (Exception e) {
+            UtilMSG.addSupportMsg();
+            UtilLog.generarLog(this.getClass(), e);
+        }
+            
+            
+    }
+    
+    public void guardarMantenimiento(){
+        try {
+            gestorGeneral=new GestorGeneral();
+            gestorMovimiento=new GestorMovimiento();
+            
+            if(historicoMovimiento.getCodMoviento()==null){
+                historicoMovimiento.setCodMoviento(gestorGeneral.nextval(GestorGeneral.MOVIMIENTOS_HISTORICO_MOVIMIENTOS_COD_MOVIMIENTO_SEQ).intValue());
+            }
+            
+            gestorMovimiento.validarMantenimiento(historicoMovimiento);
+            gestorMovimiento.guardarMantenimiento(historicoMovimiento);
+            UtilMSG.addSuccessMsg("Guardado Con Exito");
+            
+            historicoMovimiento=new HistoricoMovimientos();            
+            this.cargarMantenimientosList();
+            
+            
+        } catch (Exception e) {
+            UtilMSG.addSupportMsg();
+            UtilLog.generarLog(this.getClass(), e);
+        }
+    }
+    
+    
+    public void subirMantenimiento(){
+        try {            
+            historicoMovimiento=(HistoricoMovimientos) UtilJSF.getBean("varMantenimiento");                
+        } catch (Exception e) {
+            UtilMSG.addSupportMsg();
+            UtilLog.generarLog(this.getClass(), e);
+        }
+    }
+    
     public void subirInventario(){
         try {            
-            inventario=(Inventario) UtilJSF.getBean("varInventario");    
-            
-            
-            
+            inventario=(Inventario) UtilJSF.getBean("varInventario");                
         } catch (Exception e) {
             UtilMSG.addSupportMsg();
             UtilLog.generarLog(this.getClass(), e);
@@ -176,6 +239,20 @@ public class UIMovimientos {
         
     }
     
+    public void cargarTipoMovimientoList(){
+        try {
+            
+            estadoArticuloList=new ArrayList<>();
+            gestorArticulo=new GestorArticulo();
+            estadoArticuloList.addAll(gestorArticulo.cargarEstadosArticuloList());
+
+        } catch (Exception e) {
+            UtilMSG.addSupportMsg();
+            UtilLog.generarLog(this.getClass(), e);
+        }
+        
+    }
+    
     public void cargarEstadosArticuloList(){
         try {
             
@@ -202,6 +279,124 @@ public class UIMovimientos {
             UtilLog.generarLog(this.getClass(), e);
         }
         
+    }
+    
+    public void cargarRazonMovimientosList(){
+        try {
+            
+            razonesMovimientoList=new ArrayList<>();
+            gestorMovimiento=new GestorMovimiento();
+            razonesMovimientoList.addAll(gestorMovimiento.cargarRazonesMovimiento());
+            
+        } catch (Exception e) {
+            UtilMSG.addSupportMsg();
+            UtilLog.generarLog(this.getClass(), e);
+        }
+    }
+    
+    public void cargarMantenimientosList(){
+        try {
+            
+            mantenimientosList=new ArrayList<>();
+            gestorMovimiento=new GestorMovimiento();
+            mantenimientosList.addAll(gestorMovimiento.cargarMantenimientosList());
+            
+        } catch (Exception e) {
+            UtilMSG.addSupportMsg();
+            UtilLog.generarLog(this.getClass(), e);
+        }
+    }
+    
+    public String cargarSubmenuList(){
+        try {
+            itemsSubmenu.clear();
+            gestorMovimiento=new GestorMovimiento();
+            
+            menu=(Menu) UtilJSF.getBean("varMenu");
+            
+            itemsSubmenu.addAll(gestorMovimiento.cargarSubmenu(menu));
+            
+            return ("/movimientos/submenu-eventos.xhtml?faces-redirect=true");
+            
+        } catch (Exception e) {
+            UtilMSG.addSupportMsg();
+            UtilLog.generarLog(this.getClass(), e);
+        }
+        return ("/movimientos/submenu-eventos.xhtml?faces-redirect=true");
+    }
+    
+    public String muestraDialogo(){
+        try {
+            gestorMovimiento=new GestorMovimiento();
+            
+            submenu=(Submenu) UtilJSF.getBean("varSubmenu");
+            
+            String dirDialogo=gestorMovimiento.cargarDireccionDialogo(submenu);
+            
+            
+            
+            
+            Dialogo dialogo = new Dialogo(dirDialogo, submenu.getNombre(), "clip", Dialogo.WIDTH_AUTO);
+            UtilJSF.setBean("dialogo", dialogo, UtilJSF.SESSION_SCOPE);
+            UtilJSF.execute("PF('dialog').show();");
+            this.cargarArticulosList();            
+            this.cargarEstadosArticuloList();
+            this.cargarUbicacionesList();   
+            this.cargarInventariosList();                        
+        } catch (Exception e) {
+            UtilMSG.addSuccessMsg("En construccion");
+        }
+        return null;
+    }
+
+    public ArrayList<Submenu> getItemsSubmenu() {
+        return itemsSubmenu;
+    }
+
+    public void setItemsSubmenu(ArrayList<Submenu> itemsSubmenu) {
+        this.itemsSubmenu = itemsSubmenu;
+    }
+
+    public Menu getMenu() {
+        return menu;
+    }
+
+    public void setMenu(Menu menu) {
+        this.menu = menu;
+    }
+
+    public ArrayList<Menu> getItemsMenu() {
+        return itemsMenu;
+    }
+
+    public void setItemsMenu(ArrayList<Menu> itemsMenu) {
+        this.itemsMenu = itemsMenu;
+    }
+
+
+    
+    public ArrayList<HistoricoMovimientos> getMantenimientosList() {
+        return mantenimientosList;
+    }
+
+    public void setMantenimientosList(ArrayList<HistoricoMovimientos> mantenimientosList) {
+        this.mantenimientosList = mantenimientosList;
+    }
+
+    public ArrayList<RazonMovimiento> getRazonesMovimientoList() {
+        return razonesMovimientoList;
+    }
+
+    public void setRazonesMovimientoList(ArrayList<RazonMovimiento> razonesMovimientoList) {
+        this.razonesMovimientoList = razonesMovimientoList;
+    }
+
+    public HistoricoMovimientos getHistoricoMovimiento() {
+        return historicoMovimiento;
+    }
+
+    public void setHistoricoMovimiento(HistoricoMovimientos historicoMovimiento) {
+        this.historicoMovimiento = historicoMovimiento;
     }
 
     public ArrayList<Inventario> getInventariosList() {

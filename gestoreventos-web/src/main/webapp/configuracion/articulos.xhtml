@@ -11,32 +11,21 @@
     <ui:define name="content">
         <h:form enctype="multipart/form-data" id="formArticulos" style="font-size: small;">
             <p:panel id="panelArticulos"  header="Administrar Articulos" >
-                <h:panelGrid columns="4" >
-                    <h:outputText value="Descripcion:" style="font-weight: bolder"/>                    
+                <h:panelGrid columns="4" >                    
+                    <h:outputText value="Nombre" style="font-weight: bolder"/>                    
                     <h:outputText value="Marca:" style="font-weight: bolder"/>                    
                     <h:outputText value="Modelo" style="font-weight: bolder"/>
-                    <h:outputText value="Serial" style="font-weight: bolder"/>
+                    <h:outputText value="Periodo Mantenimiento" style="font-weight: bolder"/>                                        
                     
-                    
-                    <p:inputText value="#{uiArticulo.articulo.descripcion}" placeholder="Descripcion" style="width: 180px"/>                    
+                    <p:inputText value="#{uiArticulo.articulo.descripcion}" placeholder="Nombre" style="width: 180px"/>                    
                     <p:selectOneMenu id="somItemsMunicipios" value="#{uiArticulo.articulo.marca}" converter="convertidorGenerico"
                                      style="text-align: center;width: 180px;">  
                         <f:selectItem itemLabel="Seleccione..." itemValue="" /> 
                         <f:selectItems value="#{uiArticulo.marcasList}" var="m" itemLabel="#{m.nombre}" itemValue="#{m}"/>
                     </p:selectOneMenu>
                     <p:inputText value="#{uiArticulo.articulo.modelo}" placeholder="modelo"/>
-                    <p:inputText value="#{uiArticulo.articulo.serial}" placeholder="Serial"/>
-                    
-                    <h:outputText value="Fecha de Compra" style="font-weight: bolder"/>
-                    <h:outputText value="Ultimo Mantenimiento" style="font-weight: bolder"/>
-                    <h:outputText value="Observaciones" style="font-weight: bolder"/>
-                    <h:outputText value="" style="font-weight: bolder"/>
-                    
-                    <p:calendar value="#{uiArticulo.articulo.fechaCompra}" placeholder="Fecha Compra" pattern="dd-MM-yyyy"/>                    
-                    <p:calendar value="#{uiArticulo.articulo.ultMantenimiento}" placeholder="Ultimo Mantenimiento" pattern="dd-MM-yyyy"/>                                        
-                    
-                    <p:inputText value="#{uiArticulo.articulo.observaciones}" placeholder="Observaciones" style="width: auto;float: right"/>
-                    
+                    <p:inputText value="#{uiArticulo.articulo.periMantenimiento}" placeholder="En Meses"/>                    
+                                        
                 </h:panelGrid>
                 
                 <br>
@@ -54,15 +43,11 @@
 
                     <p:columnGroup type="header"  >  
                         <p:row>  
-                            <p:column   headerText="Opciones" />
-                            <p:column headerText="Codigo Articulo"  filterBy="#{varArticulo.codArticulo}"  />                            
-                            <p:column  headerText="Descripcion"/>
+                            <p:column   headerText="Opciones" />                            
+                            <p:column  headerText="Nombre"/>
                             <p:column  headerText="Marca"/>
-                            <p:column  headerText="Modelo"/>
-                            <p:column  headerText="Serial"/>
-                            <p:column  headerText="Fecha de Compra"/>
-                            <p:column  headerText="Ultimo Mantenimiento"/>
-                            <p:column  headerText="Observaciones"/>              
+                            <p:column  headerText="Modelo"/>                                                                                    
+                            <p:column  headerText="Period Mantenimiento"/>                                                                                    
                         </p:row> 
                     </p:columnGroup>
 
@@ -71,10 +56,7 @@
                                          action="#{uiArticulo.subirArticulo()}" />                    
                         <p:commandButton icon="ui-icon-trash" title="Eliminar Articulo" update="formArticulos"
                                          action="#{uiArticulo.eliminarArticulo()}" />
-                    </p:column>
-                    <p:column >
-                        <h:outputText value="#{varArticulo.codArticulo}" />
-                    </p:column>
+                    </p:column>                    
                     <p:column >
                         <h:outputText value="#{varArticulo.descripcion}" />
                     </p:column>
@@ -83,19 +65,10 @@
                     </p:column>
                     <p:column>
                         <h:outputText value="#{varArticulo.modelo}"/>
-                    </p:column>
-                    <p:column>
-                        <h:outputText value="#{varArticulo.serial}"/>
-                    </p:column>
-                    <p:column>
-                        <h:outputText value="#{varArticulo.fechaCompra}"/>
                     </p:column>                    
                     <p:column>
-                        <h:outputText value="#{varArticulo.ultMantenimiento}"/>
-                    </p:column>
-                    <p:column>
-                        <h:outputText value="#{varArticulo.observaciones}"/>
-                    </p:column>
+                        <h:outputText value="#{varArticulo.periMantenimiento}"/>
+                    </p:column>      
                 </p:dataTable>
 
             </p:panel>

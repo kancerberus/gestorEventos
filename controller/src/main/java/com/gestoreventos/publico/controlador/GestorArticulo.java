@@ -40,8 +40,7 @@ public class GestorArticulo extends Gestor {
 
     public void validarArticulo(Articulo articulo) {
         
-        try {
-            
+        try {            
             if(articulo.getDescripcion()==""){
                 UtilMSG.addSuccessMsg("Digite Descripcion articulo");
             }
@@ -53,16 +52,10 @@ public class GestorArticulo extends Gestor {
             }            
             if(articulo.getModelo()==""){
                 UtilMSG.addSuccessMsg("Digite Modelo Articulo");
-            }
-            if(articulo.getSerial()==""){
-                UtilMSG.addSuccessMsg("Digite Serial Articulo");
+            }                        
+            if(articulo.getPeriMantenimiento()== null){
+                UtilMSG.addSuccessMsg("Seleccione Periodo Mantenimiento");
             }            
-            if(articulo.getFechaCompra()== null){
-                UtilMSG.addSuccessMsg("Seleccione Fecha de Compra Articulo");
-            }
-            if(articulo.getUltMantenimiento()==null){
-                UtilMSG.addSuccessMsg("Seleccione Fecha Ultimo Mantenimiento Articulo");
-            }
             
             
         } catch (Exception e) {

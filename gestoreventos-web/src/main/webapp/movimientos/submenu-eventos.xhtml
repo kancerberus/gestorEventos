@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"                
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"                
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="/template.xhtml"
+                >
+
+    <ui:define name="content">
+        <h:form enctype="multipart/form-data" id="formSubmenu" style="font-size: small;">
+
+            <p:panel>
+
+                <f:facet name="header">                    
+                    
+                </f:facet>
+                <p:panel header="Menu Principal">                
+                    <p:panel header="#{uiMovimientos.menu.nombre}" style="text-align:left" >
+                        
+                        <br/>
+                        <p:dataGrid value="#{uiMovimientos.itemsSubmenu}" var="varSubmenu" styleClass="Centro"
+                                    layout="grid" columns="4">
+                            <h:panelGrid columns="1" style="width:100%">                                
+                                <h:outputText value="#{varSubmenu.nombre}" />                                
+                                <p:commandLink action="#{uiMovimientos.muestraDialogo()}" title="Submenu" update="formSubmenu">
+                                    <p:graphicImage url="/resources/imagenes/menu/#{varSubmenu.codSubMenu}.png" width="50px"/> 
+                                    <h:outputText styleClass="ui-icon ui-icon-newwin" style="margin:0 auto;" />
+                                </p:commandLink>                                
+                            </h:panelGrid>
+                        </p:dataGrid>
+                    </p:panel>  
+                </p:panel>
+            </p:panel>
+
+            <p:dialog id="dialog" widgetVar="dialog" header="#{dialogo.header}" showEffect="#{dialogo.effect}" hideEffect="#{dialogo.effect}" width="#{dialogo.width}"
+                      onHide="limpiarModal()">
+                <ui:include src="#{dialogo.src}"/>
+            </p:dialog>
+            <p:remoteCommand name="limpiarModal" action="#{uiSesion.limpiarDialogo()}"  update="dialog" />
+            
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

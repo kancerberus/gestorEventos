@@ -1,0 +1,133 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"                
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"                
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="/template.xhtml"
+                >
+
+    <ui:define name="content">
+        <h:form enctype="multipart/form-data" id="formMantenimiento" style="font-size: small;">
+            <p:panel id="panelMantenimiento"  header="Administrar Mantenimieto" >
+                <h:panelGrid columns="3" >
+                    <h:outputText value="Articulo" style="font-weight: bolder"/>                    
+                    <h:outputText value="Tipo Movimiento" style="font-weight: bolder"/>
+                    <h:outputText value="Movimiento a Proveedor:" style="font-weight: bolder"/>     
+                    
+                    <p:selectOneMenu id="advanced" value="#{uiMovimientos.historicoMovimiento.articulo}" converter="convertidorGenerico" panelStyle="width:180px"
+                                effect="fade" var="articulo" style="width:150px" filter="true" filterMatchMode="startsWith">
+                        
+                        <f:selectItems value="#{uiMovimientos.articulosList}" var="art" itemLabel="#{art.serial}" itemValue="#{art}" />
+
+                        <p:column style="width:10%">
+                            <f:facet name="header">
+                               <h:outputText value="Serial"/>
+                            </f:facet>
+                            <h:outputText value="#{articulo.serial}" />
+                        </p:column>
+
+                        <p:column>
+                           <f:facet name="header">
+                               <h:outputText value="Nombre"/>
+                            </f:facet>
+                            <h:outputText value="#{articulo.descripcion}" />
+                        </p:column>
+                        <f:facet name="footer">
+                           <p:separator />
+                           <h:outputText value="#{uiMovimientos.articulosList.size} Articulos" style="font-weight:bold;"/>
+                        </f:facet>
+                    </p:selectOneMenu>
+                    
+                    <p:selectBooleanButton id="value1" value="#{uiMovimientos.historicoMovimiento.tipoMovimiento}" onLabel="IN" offLabel="SA" style="width:150px" />
+                    
+                    <p:selectOneMenu id="somItemsProveedores" value="#{uiMovimientos.historicoMovimiento.proveedor}" converter="convertidorGenerico"
+                                     style="text-align: center;width: 180px;">  
+                        <f:selectItem itemLabel="Seleccione..." itemValue="" /> 
+                        <f:selectItems value="#{uiProveedor.proveedoresList}" var="pr" itemLabel="#{pr.nombre}" itemValue="#{pr}"/>
+                    </p:selectOneMenu>
+                    
+                    
+                    <h:outputText value="Fecha Movimiento:" style="font-weight: bolder"/>                         
+                    <h:outputText value="Estado Articulo:" style="font-weight: bolder"/>     
+                    <h:outputText value="" style="font-weight: bolder"/>     
+                    
+                    <p:calendar value="#{uiMovimientos.historicoMovimiento.fechaMovimiento}" placeholder="Fecha Movimiento" pattern="dd-MM-yyyy"/>                                        
+                                        
+                    <p:selectOneMenu id="somItemsEstado" value="#{uiMovimientos.historicoMovimiento.articulo.edoArticulo}" converter="convertidorGenerico"
+                                     style="text-align: center;width: 180px;">  
+                        <f:selectItem itemLabel="Seleccione..." itemValue="" /> 
+                        <f:selectItems value="#{uiMovimientos.estadoArticuloList}" var="ea" itemLabel="#{ea.nombre}" itemValue="#{ea}"/>
+                    </p:selectOneMenu>
+                    
+                </h:panelGrid>
+                
+                <br>
+                    
+                </br>
+
+                <h:panelGrid columns="2">
+                    <p:commandButton value="Crear / Modificar" action="#{uiMovimientos.guardarMantenimiento()}"
+                                     icon="ui-icon-disk"
+                                     update="formMantenimiento"/>
+                    
+                </h:panelGrid>  
+                
+                <p:dataTable  value="#{uiMovimientos.mantenimientosList}" var="varMantenimiento" emptyMessage="No hay Mantenimientos" 
+                              rowStyleClass="Centro" style="font-size: 10px">
+
+                    <p:columnGroup type="header"  >  
+                        <p:row>  
+                            <p:column   headerText="Opciones" style="width: 100px"/>                            
+                            <p:column headerText="Movimiento"  filterBy="#{varMantenimiento.codMoviento}"  style="width: 50px"/>                            
+                            <p:column headerText="Serial"  filterBy="#{varMantenimiento.articulo.serial}"  style="width: 50px"/>                            
+                            <p:column headerText="Proveedor"  style="width: 130px"  />                            
+                            <p:column headerText="Fecha Movimiento"  style="width: 90px"  />                            
+                            <p:column headerText="Tipo Movimiento"  style="width: 90px"  />                                                        
+                            <p:column headerText="Razon Movimiento"  style="width: 90px"  />                                                        
+                            <p:column  headerText="Estado Articulo" style="width: 150px"/>
+                        </p:row> 
+                    </p:columnGroup>
+
+                    <p:column>
+                        <p:commandButton icon="ui-icon-pencil" title="Modificar Inventario" update="formMantenimiento"
+                                         action="#{uiMovimientos.subirMantenimiento()}" />                    
+                        <p:commandButton icon="ui-icon-trash" title="Eliminar Inventario" update="formMantenimiento"
+                                         action="#{uiMovimientos}" />
+                    </p:column>
+                    <p:column >
+                        <h:outputText value="#{varMantenimiento.codMoviento}" />
+                    </p:column>
+                    <p:column >
+                        <h:outputText value="#{varMantenimiento.articulo.serial}" />
+                    </p:column>
+                    <p:column >
+                        <h:outputText value="#{varMantenimiento.proveedor.nombre}" />
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{varMantenimiento.fechaMovimiento}"/>
+                    </p:column>
+                    <p:column >
+                        <h:outputText value="#{varMantenimiento.tipoMovimiento ? 'INGRESA A':'SALE DE'}" />
+                    </p:column>                    
+                    <p:column>
+                        <h:outputText value="#{varMantenimiento.razonMovimiento.nombre}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{varMantenimiento.articulo.edoArticulo.nombre}"/>
+                    </p:column>
+                </p:dataTable>
+
+            </p:panel>
+
+            <p:dialog id="dialog" widgetVar="dialog" header="#{dialogo.header}" showEffect="#{dialogo.effect}" hideEffect="#{dialogo.effect}"
+                      onHide="limpiarModal()">
+                <ui:include src="#{dialogo.src}"/>
+            </p:dialog>
+            <p:remoteCommand name="limpiarModal" action="#{uiSesion.limpiarDialogo()}" update="dialog" />
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

@@ -70,10 +70,9 @@ public class UIArticulo {
             gestorArticulo=new GestorArticulo();
             gestorGeneral=new GestorGeneral();            
             
-            if(articulo.getCodArticulo()==null){
+            if(articulo.getCodArticulo()==null){                
                 articulo.setCodArticulo(gestorGeneral.nextval(GestorGeneral.ARTICULO_COD_ARTICULO_SEQ).intValue());
             }
-            
             
             gestorArticulo.validarArticulo(articulo);
             gestorArticulo.guardarArticulo(articulo);

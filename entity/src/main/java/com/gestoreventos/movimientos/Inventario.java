@@ -30,29 +30,61 @@ public class Inventario implements Serializable, Cloneable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @Column(name = "serial")
+    private String serial;            
     @Column(name = "cod_articulo")
-    private Integer codArticulo;        
-    private Marca marca=new Marca();
+    private Integer codArticulo;            
     @Column(name = "observacion")
     private String observacion;
-    @Column(name = "estado")    
+    @Column(name = "estado")        
     private Boolean estado;
+    @Column(name = "ult_mantenimiento")
+    private Date ultMantenimiento;
+    @Column(name = "fecha_compra")
+    private Date fechaCompra;    
+    
     private Articulo articulo=new Articulo();
+    private Marca marca=new Marca();
     private Ubicacion ubicacion=new Ubicacion();
     private EstadoArticulo edoArticulo=new EstadoArticulo();
+    private HistoricoMovimientos historicoMovimiento=new HistoricoMovimientos();
     
     
     public Inventario() {        
         
     }
 
-    public Inventario(Integer codArticulo, String observacion, Boolean estado) {
-        this.codArticulo = codArticulo;
-        this.observacion = observacion;
-        this.estado = estado;
+    public String getSerial() {
+        return serial;
     }
+
+    public void setSerial(String serial) {
+        this.serial = serial;
+    }
+
+    public Date getFechaCompra() {
+        return fechaCompra;
+    }
+
+    public void setFechaCompra(Date fechaCompra) {
+        this.fechaCompra = fechaCompra;
+    }    
     
-    
+    public HistoricoMovimientos getHistoricoMovimiento() {
+        return historicoMovimiento;
+    }
+
+    public void setHistoricoMovimiento(HistoricoMovimientos historicoMovimiento) {
+        this.historicoMovimiento = historicoMovimiento;
+    }
+
+    public Date getUltMantenimiento() {
+        return ultMantenimiento;
+    }
+
+    public void setUltMantenimiento(Date ultMantenimiento) {
+        this.ultMantenimiento = ultMantenimiento;
+    }
 
     public Articulo getArticulo() {
         return articulo;

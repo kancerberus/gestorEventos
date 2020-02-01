@@ -4,25 +4,24 @@
                 xmlns:ui="http://java.sun.com/jsf/facelets"                
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:p="http://primefaces.org/ui"                
-                xmlns:f="http://java.sun.com/jsf/core"
-                template="/template.xhtml"
-                >
+                xmlns:f="http://java.sun.com/jsf/core">
 
-    <ui:define name="content">
-        <h:form enctype="multipart/form-data" id="formInventario" style="font-size: small;">
+    <div style="margin-top: 2px; text-align: center;">
+        <p:outputPanel id="opIngresoInventarios">
             <p:panel id="panelInventario"  header="Administrar Estado De Inventario" >
-                <h:panelGrid columns="5" >
+                <center>
+                    <h:panelGrid columns="4" >
                     <h:outputText value="Articulo" style="font-weight: bolder"/>                    
                     <h:outputText value="Estado Articulo" style="font-weight: bolder"/>
                     <h:outputText value="Ubicacion:" style="font-weight: bolder"/>     
                     <h:outputText value="Ultimo Mantenimiento" style="font-weight: bolder"/>
-                    <h:outputText value="Observaciones" style="font-weight: bolder"/>
+                    
                     
                     
                     <p:selectOneMenu id="advanced" value="#{uiMovimientos.inventario.articulo}" converter="convertidorGenerico" panelStyle="width:180px"
                                 effect="fade" var="articulo" style="width:160px" filter="true" filterMatchMode="startsWith">
-                        <f:selectItem itemLabel="Serial..." itemValue="" /> 
-                        <f:selectItems value="#{uiMovimientos.articulosList}" var="art" itemLabel="#{art.codArticulo}" itemValue="#{art}" />
+                        <f:selectItem itemLabel="Nombre..." itemValue="" /> 
+                        <f:selectItems value="#{uiMovimientos.articulosList}" var="art" itemLabel="#{art.descripcion}" itemValue="#{art}" />
 
                         <p:column>
                            <f:facet name="header">
@@ -62,28 +61,33 @@
                     </p:selectOneMenu>
 
                     <p:calendar value="#{uiMovimientos.inventario.ultMantenimiento}" placeholder="Ultimo Mantenimiento" pattern="dd-MM-yyyy"/>                                                            
-                                        
+                                                            
                     <h:outputText value="Estado" style="font-weight: bolder"/>
                     <h:outputText value="Observaciones" style="font-weight: bolder"/>                    
                     <h:outputText value="" style="font-weight: bolder"/>                    
                     <h:outputText value="" style="font-weight: bolder"/>                    
+                    
                     
                     <p:selectBooleanButton id="value1" value="#{uiMovimientos.inventario.estado}" onLabel="Activo" offLabel="Inactivo" style="width:150px" />
                     <p:inputText value="#{uiMovimientos.inventario.observacion}" placeholder="Observacion" style="width: 180px"/>                    
                     
                     
                 </h:panelGrid>
-                
-                <br>
+                    
+                    <br>
                     
                 </br>
 
                 <h:panelGrid columns="2">
                     <p:commandButton value="Crear / Modificar" action="#{uiMovimientos.guardarInventario()}"
                                      icon="ui-icon-disk"
-                                     update="formInventario"/>
+                                     update="formSubmenu"/>
                     
                 </h:panelGrid>  
+                </center>
+                
+                
+                
                 
                 <p:dataTable  value="#{uiMovimientos.inventariosList}" var="varInventario" emptyMessage="No hay Articulos" 
                               rowStyleClass="Centro" style="font-size: 10px">
@@ -104,13 +108,13 @@
                     </p:columnGroup>
 
                     <p:column>
-                        <p:commandButton icon="ui-icon-pencil" title="Modificar Inventario" update="formInventario"
+                        <p:commandButton icon="ui-icon-pencil" title="Modificar Inventario" update="formSubmenu"
                                          action="#{uiMovimientos.subirInventario()}" />                    
-                        <p:commandButton icon="ui-icon-trash" title="Eliminar Inventario" update="formInventario"
+                        <p:commandButton icon="ui-icon-trash" title="Eliminar Inventario" update="formSubmenu"
                                          action="#{uiMovimientos.eliminarInventario()}" />
                     </p:column>
                     <p:column >
-                        <h:outputText value="#{varInventario.articulo.serial}" />
+                        <h:outputText value="#{varInventario.serial}" />
                     </p:column>
                     <p:column >
                         <h:outputText value="#{varInventario.articulo.descripcion}" />
@@ -135,13 +139,12 @@
 
             </p:panel>
 
-            <p:dialog id="dialog" widgetVar="dialog" header="#{dialogo.header}" showEffect="#{dialogo.effect}" hideEffect="#{dialogo.effect}"
-                      onHide="limpiarModal()">
-                <ui:include src="#{dialogo.src}"/>
-            </p:dialog>
-            <p:remoteCommand name="limpiarModal" action="#{uiSesion.limpiarDialogo()}" update="dialog" />
-        </h:form>
+        </p:outputPanel>
 
-    </ui:define>
+    </div>
+
+
+
+
 
 </ui:composition>

@@ -30,62 +30,28 @@ public class Articulo implements Serializable, Cloneable {
     @Id
     @Basic(optional = false)
     @Column(name = "cod_articulo")
-    private Integer codArticulo;
+    private Integer codArticulo;       
     @Column(name = "descripcion")
     private String descripcion;   
     @Column(name = "modelo")
-    private String modelo;  
-    @Column(name = "serial")
-    private String serial;   
-    @Column(name = "fecha_compra")
-    private Date fechaCompra;   
-    @Column(name = "observaciones")
-    private String observaciones;   
-    @Column(name = "ult_mantenimiento")
-    private Date ultMantenimiento; 
+    private String modelo;                  
+    @Column(name = "periodo_manetnimiento")
+    private Integer periMantenimiento;
+     
     
     private Marca marca=new Marca();
-    private EstadoArticulo edoArticulo=new EstadoArticulo();
-    private Ubicacion ubicacion=new Ubicacion();
+    private EstadoArticulo edoArticulo=new EstadoArticulo();    
     
     public Articulo() {        
-        edoArticulo=new EstadoArticulo();
-        ubicacion=new Ubicacion();
+        edoArticulo=new EstadoArticulo();        
     }
 
-    public Articulo(Integer codArticulo, String descripcion, String modelo, String serial, Date fechaCompra, String observaciones, Date ultMantenimiento) {
-        this.codArticulo = codArticulo;
+    public Articulo(Integer codArticulo, String descripcion, String modelo, Integer periMantenimiento) {
+        this.codArticulo = codArticulo;        
         this.descripcion = descripcion;
         this.modelo = modelo;
-        this.serial = serial;
-        this.fechaCompra = fechaCompra;
-        this.observaciones = observaciones;
-        this.ultMantenimiento = ultMantenimiento;
-    }
-
-    public EstadoArticulo getEdoArticulo() {
-        return edoArticulo;
-    }
-
-    public void setEdoArticulo(EstadoArticulo edoArticulo) {
-        this.edoArticulo = edoArticulo;
-    }
-
-    public Ubicacion getUbicacion() {
-        return ubicacion;
-    }
-
-    public void setUbicacion(Ubicacion ubicacion) {
-        this.ubicacion = ubicacion;
-    }    
-    
-    public Marca getMarca() {
-        return marca;
-    }
-
-    public void setMarca(Marca marca) {
-        this.marca = marca;
-    }    
+        this.periMantenimiento = periMantenimiento;
+    } 
 
     public Integer getCodArticulo() {
         return codArticulo;
@@ -94,6 +60,30 @@ public class Articulo implements Serializable, Cloneable {
     public void setCodArticulo(Integer codArticulo) {
         this.codArticulo = codArticulo;
     }
+
+    public Integer getPeriMantenimiento() {
+        return periMantenimiento;
+    }
+
+    public void setPeriMantenimiento(Integer periMantenimiento) {
+        this.periMantenimiento = periMantenimiento;
+    }
+    
+    public EstadoArticulo getEdoArticulo() {
+        return edoArticulo;
+    }
+
+    public void setEdoArticulo(EstadoArticulo edoArticulo) {
+        this.edoArticulo = edoArticulo;
+    }
+    
+    public Marca getMarca() {
+        return marca;
+    }
+
+    public void setMarca(Marca marca) {
+        this.marca = marca;
+    }   
 
     public String getDescripcion() {
         return descripcion;
@@ -110,40 +100,6 @@ public class Articulo implements Serializable, Cloneable {
     public void setModelo(String modelo) {
         this.modelo = modelo;
     }
-
-    public String getSerial() {
-        return serial;
-    }
-
-    public void setSerial(String serial) {
-        this.serial = serial;
-    }
-
-    public Date getFechaCompra() {
-        return fechaCompra;
-    }
-
-    public void setFechaCompra(Date fechaCompra) {
-        this.fechaCompra = fechaCompra;
-    }
-
-    public String getObservaciones() {
-        return observaciones;
-    }
-
-    public void setObservaciones(String observaciones) {
-        this.observaciones = observaciones;
-    }
-
-    public Date getUltMantenimiento() {
-        return ultMantenimiento;
-    }
-
-    public void setUltMantenimiento(Date ultMantenimiento) {
-        this.ultMantenimiento = ultMantenimiento;
-    }
-
-
 
     @Override
     public int hashCode() {

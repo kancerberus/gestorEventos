@@ -17,11 +17,11 @@ import java.util.List;
  */
 public class GestorGeneral extends Gestor implements Serializable {
 
-//    public static String USUARIO_MENUS_COD_MENU_SEQ = "usuario.menus_cod_menu_seq";
-    public static String GESTOR_EVALUACION_COD_EVALUACION_SEQ = "gestor.evaluacion_cod_evaluacion_seq";
+//    public static String USUARIO_MENUS_COD_MENU_SEQ = "usuario.menus_cod_menu_seq";    
     public static String UBICACION_COD_UBICACION_SEQ = "ubicaciones_cod_ubicacion_seq";
     public static String PROVEEDOR_COD_PROVEEDOR_SEQ = "proveedor_cod_proveedor_seq";
     public static String ARTICULO_COD_ARTICULO_SEQ = "articulo_cod_articulo_seq";
+    public static String MOVIMIENTOS_HISTORICO_MOVIMIENTOS_COD_MOVIMIENTO_SEQ = "movimientos.historico_movimientos_cod_movimiento_seq";
     
     public static boolean VALIDA_PK = true;
     public static boolean NO_VALIDA_PK = false;

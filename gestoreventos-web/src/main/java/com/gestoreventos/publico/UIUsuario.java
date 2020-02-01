@@ -131,7 +131,7 @@ public class UIUsuario {
 
                 UtilJSF.setBean("dialogo", new Dialogo(), UtilJSF.SESSION_SCOPE);
                 
-                return ("/inicio/principal.xhtml?faces-redirect=true");
+                return ("/movimientos/menu-eventos.xhtml?faces-redirect=true");
             }else{
                 UtilMSG.addWarningMsg("Usuario o clave invalida.");
             }

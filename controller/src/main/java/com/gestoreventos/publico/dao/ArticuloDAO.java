@@ -37,12 +37,12 @@ public class ArticuloDAO {
             consulta = new Consulta(this.conexion);
             StringBuilder sql = new StringBuilder(
                     "INSERT INTO articulo("
-                    + " cod_articulo, cod_marca, descripcion, modelo, serial, fecha_compra, observaciones, ult_mantenimiento)"
-                    + " VALUES ('" + articulo.getCodArticulo()+"','"+articulo.getMarca().getCodMarca()+"', '"+articulo.getDescripcion()+"', '"+articulo.getModelo()+"', "
-                    + "'"+articulo.getSerial()+"','"+articulo.getFechaCompra()+"','"+articulo.getObservaciones()+"','"+articulo.getUltMantenimiento()+"')"
+                    + " cod_articulo, cod_marca, descripcion, modelo, periodo_mantenimiento)"
+                    + " VALUES ('" + articulo.getCodArticulo()+"','"+articulo.getMarca().getCodMarca()+"', '"+articulo.getDescripcion().toUpperCase()+"', '"+articulo.getModelo()+"', "
+                    + "'"+articulo.getPeriMantenimiento()+"')"
                     + " ON CONFLICT (cod_articulo) DO UPDATE SET "
-                    + " cod_marca = EXCLUDED.cod_marca , descripcion=EXCLUDED.descripcion, modelo=EXCLUDED.serial, fecha_compra=EXCLUDED.fecha_compra, "
-                    + " observaciones=EXCLUDED.observaciones, ult_mantenimiento=EXCLUDED.ult_mantenimiento "
+                    + " cod_marca = EXCLUDED.cod_marca , descripcion=EXCLUDED.descripcion, modelo=EXCLUDED.modelo, periodo_mantenimiento=EXCLUDED.periodo_mantenimiento "
+                    
                     
                     
             );
@@ -60,18 +60,17 @@ public class ArticuloDAO {
         try {
             consulta = new Consulta(this.conexion);
             StringBuilder sql = new StringBuilder(
-                    "SELECT art.cod_articulo codart, ma.cod_marca codmar,ma.nombre nommar, art.descripcion descart, "
-                    + " art.modelo artmodelo, art.serial artserial, art.fecha_compra artfcompra, art.observaciones obsart, "
-                    + " art.ult_mantenimiento ultmart "                            
-                    + " FROM public.articulo art"
-                    + " join marca ma using (cod_marca)"                                        
-                    + " ORDER BY cod_articulo"
+                    " SELECT art.cod_articulo codart, ma.cod_marca codmar,ma.nombre nommar, art.descripcion descart,  " +
+                    " art.modelo artmodelo, art.periodo_mantenimiento artpm " +
+                    " FROM public.articulo art " +
+                    " join marca ma using (cod_marca) " +                                        
+                    " ORDER BY art.cod_articulo "
             );
             rs = consulta.ejecutar(sql);
             ArrayList<Articulo> articulos = new ArrayList<>();
             while (rs.next()) {
-                Articulo art= new Articulo(rs.getInt("codart"), rs.getString("descart"), rs.getString("artmodelo"), rs.getString("artserial"), rs.getDate("artfcompra"), rs.getString("obsart"), rs.getDate("ultmart"));
-                art.setMarca(new Marca(rs.getInt("codmar"), rs.getString("nommar"))); 
+                Articulo art= new Articulo(rs.getInt("codart"), rs.getString("descart"), rs.getString("artmodelo"), rs.getInt("artpm"));
+                art.setMarca(new Marca(rs.getInt("codmar"), rs.getString("nommar")));                 
                 articulos.add(art);                
             }
             return articulos;
