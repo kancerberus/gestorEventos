@@ -157,7 +157,7 @@ public class GestorMovimiento extends Gestor {
         }
     }
 
-    public void guardarMantenimiento(HistoricoMovimientos historicoMovimiento) throws Exception {
+    /*public void guardarMantenimiento(HistoricoMovimientos historicoMovimiento) throws Exception {
         
         try {
             this.abrirConexion();
@@ -177,7 +177,7 @@ public class GestorMovimiento extends Gestor {
         } finally {
             this.cerrarConexion();
         }
-    }
+    }*/
 
     public Collection<? extends Menu> cargarItemsMenu() throws Exception {
         try {
