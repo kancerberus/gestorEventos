@@ -21,7 +21,7 @@
                         
                         <br/>
                         <p:dataGrid value="#{uiMovimientos.itemsSubmenu}" var="varSubmenu" styleClass="Centro"
-                                    layout="grid" columns="4">
+                                                                        layout="grid" columns="4">
                             <h:panelGrid columns="1" style="width:100%">                                
                                 <h:outputText value="#{varSubmenu.nombre}" />                                
                                 <p:commandLink action="#{uiMovimientos.muestraDialogo()}" title="Submenu" update="formSubmenu">
