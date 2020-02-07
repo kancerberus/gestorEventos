@@ -1,0 +1,132 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"                
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"                
+                xmlns:f="http://java.sun.com/jsf/core">
+
+    <div style="margin-top: 2px; text-align: center;">
+        <p:outputPanel id="opPrestamos">
+            <p:panel id="panelPrestamos"  header="Administrar Prestamo Salida Articulos" >
+                <center>
+                    <h:panelGrid columns="4" >
+                    <h:outputText value="Ubicacion" style="font-weight: bolder"/>                    
+                    <h:outputText value="Articulo" style="font-weight: bolder"/>                    
+                    <h:outputText value="Proveedor" style="font-weight: bolder"/>                                        
+                    <h:outputText value="Fecha Devolucion" style="font-weight: bolder"/>                    
+                    
+                    <p:selectOneMenu id="somItemsUbicaciones" value="#{uiMovimientos.ubicacion}" converter="convertidorGenerico"
+                                     style="text-align: center;width: 180px;">  
+                        <f:selectItem itemLabel="Seleccione..." itemValue="" /> 
+                        <f:selectItems value="#{uiUbicacion.ubicacionesList}" var="ub" itemLabel="#{ub.nombre}" itemValue="#{ub}"/>  
+                        <p:ajax listener="#{uiMovimientos.cargarInventariosUbicacionList()}" update="aaa"/>
+                    </p:selectOneMenu>  
+                    
+                    
+                    <p:selectOneMenu id="aaa" value="#{uiMovimientos.prestamo.inventario}" converter="convertidorGenerico" panelStyle="width:180px"
+                                     effect="fade" var="inventario" style="width:300px" filter="true" filterMatchMode="startsWith">                        
+                        <f:selectItem itemLabel="Seleccione..." itemValue=""/>
+                        <f:selectItems value="#{uiMovimientos.inventariosUbicacionList}" var="inv" itemLabel="#{inv.articulo.descripcion}" itemValue="#{inv}" />                                                
+                        <p:column>
+                           <f:facet name="header">
+                               <h:outputText value="Serial"/>
+                            </f:facet>
+                            <h:outputText value="#{inventario.serial}" />
+                        </p:column>
+                        <p:column>
+                           <f:facet name="header">
+                               <h:outputText value="Nombre"/>
+                            </f:facet>
+                            <h:outputText value="#{inventario.articulo.descripcion}" />
+                        </p:column>
+                        <p:column>
+                           <f:facet name="header">
+                               <h:outputText value="Edo Articulo"/>
+                            </f:facet>
+                            <h:outputText value="#{inventario.edoArticulo.nombre}" />
+                        </p:column>
+                    </p:selectOneMenu>
+                                                            
+                    
+                    
+                    <p:selectOneMenu id="somItemsProveedor" value="#{uiMovimientos.prestamo.proveedor}" converter="convertidorGenerico"
+                                     style="text-align: center;width: 180px;">  
+                        <f:selectItem itemLabel="Seleccione..." itemValue="" /> 
+                        <f:selectItems value="#{uiProveedor.proveedoresList}" var="pr" itemLabel="#{pr.nombre}" itemValue="#{pr}"/>
+                    </p:selectOneMenu>
+                    
+                    <p:calendar id="fecI" value="#{uiMovimientos.prestamo.fechaDevolucion}" pattern="dd-MM-yyyy" mask="true"/>
+                    
+                    <h:outputText value="Observacion" style="font-weight: bolder"/>                    
+                    <h:outputText value="" style="font-weight: bolder"/>                    
+                    <h:outputText value="" style="font-weight: bolder"/>                    
+                    <h:outputText value="" style="font-weight: bolder"/>                    
+                    
+                    <p:inputText style="width: 250px" value="#{uiMovimientos.prestamo.observacion}" />
+                    
+                </h:panelGrid>
+                    
+                    <br>
+                    
+                </br>
+
+                <h:panelGrid columns="2">
+                    <p:commandButton value="Crear / Modificar" action="#{uiMovimientos.guardarPrestamoSalida()}"
+                                     icon="ui-icon-disk" update="formCategoria:opPrestamos"
+                                     />
+                    
+                </h:panelGrid>  
+                </center>
+                
+                
+                <p:dataTable  value="#{uiMovimientos.prestamosSalidaList}" var="varPrestamoSalida" emptyMessage="No hay Prestamos" 
+                              rowStyleClass="Centro" style="font-size: 10px">
+
+                    <p:columnGroup type="header"  >  
+                        <p:row>                              
+                            <p:column headerText="Serial"  filterBy="#{varPrestamoSalida.serial}"  style="width: 150px"/>                            
+                            <p:column headerText="Descripcion Articulo"  filterBy="#{varPrestamoSalida.inventario.articulo.descripcion}" style="width: 200px"  />                                                        
+                            <p:column headerText="Estado Articulo"   style="width: 150px"/>                            
+                            <p:column  headerText="Proveedor" style="width: 150px"/>
+                            <p:column  headerText="Fecha Devolucion" style="width: 150px"/>
+                            <p:column  headerText="En Prestamo" style="width: 150px"/>
+                            <p:column  headerText="Observaciones" style="width: 150px"/>
+                            
+                        </p:row> 
+                    </p:columnGroup>
+                    
+                    <p:column >
+                        <h:outputText value="#{varPrestamoSalida.inventario.serial}" />
+                    </p:column>
+                    <p:column >
+                        <h:outputText value="#{varPrestamoSalida.inventario.articulo.descripcion}" />
+                    </p:column>                    
+                    <p:column >
+                        <h:outputText value="#{varPrestamoSalida.inventario.articulo.edoArticulo.nombre}" />
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{varPrestamoSalida.proveedor.nombre}" />
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{varPrestamoSalida.fechaDevolucion}" />
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{varPrestamoSalida.enPrestamo ? 'En Prestamo':'Devuelto' }" />
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{varPrestamoSalida.observacion}" />
+                    </p:column>                    
+                </p:dataTable>                
+
+            </p:panel>
+
+        </p:outputPanel>
+
+    </div>
+
+
+
+
+
+</ui:composition>

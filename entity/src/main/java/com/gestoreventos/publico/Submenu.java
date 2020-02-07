@@ -34,8 +34,19 @@ public class Submenu implements Serializable, Cloneable {
     private String codSubMenu;
     @Column(name = "nombre")
     private String nombre;   
+    @Column(name = "direc_dialogo")
+    private String dirDialogo;   
+    
        
     public Submenu() {        
+    }
+
+    public String getDirDialogo() {
+        return dirDialogo;
+    }
+
+    public void setDirDialogo(String dirDialogo) {
+        this.dirDialogo = dirDialogo;
     }
 
     public String getCodSubMenu() {

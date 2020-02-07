@@ -9,7 +9,7 @@
                 >
 
     <ui:define name="content">
-        <h:form enctype="multipart/form-data" id="formSubmenu" style="font-size: small;">
+        <h:form enctype="multipart/form-data" id="formCategoria" style="font-size: small;">
 
             <p:panel>
 
@@ -18,14 +18,14 @@
                 </f:facet>
                 <p:panel header="Menu Principal">    
                     
-                    <p:panel header="#{uiMovimientos.menu.nombre}" style="text-align:left" >
+                    <p:panel header="#{uiMovimientos.submenu.nombre}" style="text-align:left" >
                                                 
-                        <p:dataGrid value="#{uiMovimientos.itemsSubmenu}" var="varSubmenu" styleClass="Centro" style="align-items: flex-end"
-                                    layout="grid" columns="#{uiMovimientos.tamañoLista}">                            
+                        <p:dataGrid value="#{uiMovimientos.itemsSubmenucategoria}" var="varCategoria" styleClass="Centro" style="align-items: flex-end"
+                                    layout="grid" columns="#{uiMovimientos.tamListacat}">                            
                                 <h:panelGrid columns="1" style="width:100%;">     
-                                <h:outputText value="#{varSubmenu.nombre}" />                                
-                                <p:commandLink action="#{uiMovimientos.muestraDialogoSubmenu()}" title="Submenu" update="formSubmenu">
-                                    <p:graphicImage url="/resources/imagenes/menu/#{varSubmenu.codSubMenu}.png" width="50px"/>                                     
+                                    <h:outputText value="#{varCategoria.nombre}" />                                
+                                <p:commandLink action="#{uiMovimientos.mostrarDialogoCategoria()}" title="Categoria" update="formCategoria">
+                                    <p:graphicImage url="/resources/imagenes/menu/#{varCategoria.codCategoria}.png" width="50px"/>                                     
                                 </p:commandLink>                                
                             </h:panelGrid>
                         </p:dataGrid>

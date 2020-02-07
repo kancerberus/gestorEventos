@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"                
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"                
+                xmlns:f="http://java.sun.com/jsf/core">
+
+    <div style="margin-top: 2px; text-align: center;">
+        <p:outputPanel id="opVisorPrestamos">
+            <p:panel id="panelVisorPrestamos"  header="Administrar Prestamo Salida Articulos" >
+                <p:separator/>
+                <center>
+                    <h:panelGrid columns="3">
+                        
+                        <f:facet name="header">
+                            Filtros de Búsqueda
+                        </f:facet>
+                          <h:outputLabel value="Seleccione Tipo Prestamo:" style="font-weight: bolder"/>
+                          <h:outputLabel value="" style="font-weight: bolder"/>
+                          <h:outputLabel value="Seleccione Proveedor:" style="font-weight: bolder"/>
+                          
+                        <p:selectBooleanButton id="ing" value="#{uiMovimientos.prestamo.ingreso}" onLabel="Salida:" offLabel="Ingreso" onIcon="pi pi-check" offIcon="pi pi-times" style="width:160px">                                                        
+                        </p:selectBooleanButton>                    
+                          <h:outputLabel value="" style="font-weight: bolder"/>
+                        <p:selectOneMenu id="somItemprovs" value="#{uiMovimientos.prestamo.proveedor}" converter="convertidorGenerico"
+                                     style="text-align: center;width: 180px;">  
+                            <f:selectItem itemLabel="Seleccione..." itemValue="" /> 
+                            <f:selectItems value="#{uiProveedor.proveedoresList}" var="pro" itemLabel="#{pro.nombre}" itemValue="#{pro}"/>
+                        </p:selectOneMenu>                        
+                    </h:panelGrid>
+                    <br></br>
+                    
+                    <p:commandButton value="Consultar" style="margin: auto auto;width: 210px;height: 30px; border-radius: 10px;"
+                                     action="#{uiMovimientos.consultarPrestamosTipo()}" update="formCategoria:opVisorPrestamos"/>
+                
+                </center>
+                <p:separator/>
+                <br></br>
+                
+                
+                <p:dataTable id="prest" value="#{uiMovimientos.prestamosTotalList}" var="varPrestamoSalida" emptyMessage="No hay Prestamos" 
+                              rowStyleClass="Centro" style="font-size: 10px">
+                    <p:autoUpdate/>
+                    <p:columnGroup type="header"  >  
+                        <p:row>  
+                            <p:column   headerText="Opciones" style="width: 50px"/>
+                            <p:column headerText="Serial"  filterBy="#{varPrestamoSalida.serial.toString}"  style="width: 150px"/>                            
+                            <p:column headerText="Descripcion Articulo"  filterBy="#{varPrestamoSalida.inventario.articulo.descripcion}" style="width: 200px"  />                                                        
+                            <p:column headerText="Estado Articulo"   style="width: 150px"/>                            
+                            <p:column  headerText="Proveedor" style="width: 150px" />
+                            <p:column  headerText="Fecha Devolucion" style="width: 150px"/>
+                            <p:column  headerText="En Prestamo" style="width: 150px"/>
+                            <p:column  headerText="Tipo Prestamo" style="width: 150px" />
+                            <p:column  headerText="Observaciones" style="width: 150px"/>
+                            
+                        </p:row> 
+                    </p:columnGroup>
+                    
+                    <p:column >
+                    <p:commandButton icon="ui-icon-pencil" title="Finalizar Prestamo" update="formCategoria:opVisorPrestamos"
+                                         action="#{uiMovimientos}" />                    
+                    </p:column>                    
+                    <p:column >
+                        <h:outputText value="#{varPrestamoSalida.inventario.serial}" />
+                    </p:column>
+                    <p:column >
+                        <h:outputText value="#{varPrestamoSalida.inventario.articulo.descripcion}" />
+                    </p:column>                    
+                    <p:column >
+                        <h:outputText value="#{varPrestamoSalida.inventario.articulo.edoArticulo.nombre}" />
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{varPrestamoSalida.proveedor.nombre}" />
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{varPrestamoSalida.fechaDevolucion}" />
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{varPrestamoSalida.enPrestamo ? 'En Prestamo':'Devuelto' }" />
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{varPrestamoSalida.ingreso ? 'Salida':'Ingreso'}" />
+                    </p:column>                    
+                    <p:column>
+                        <h:outputText value="#{varPrestamoSalida.observacion}" />
+                    </p:column>                    
+                </p:dataTable>                
+
+            </p:panel>
+
+        </p:outputPanel>
+
+    </div>
+
+
+
+
+
+</ui:composition>

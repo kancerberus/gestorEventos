@@ -22,6 +22,7 @@ public class GestorGeneral extends Gestor implements Serializable {
     public static String PROVEEDOR_COD_PROVEEDOR_SEQ = "proveedor_cod_proveedor_seq";
     public static String ARTICULO_COD_ARTICULO_SEQ = "articulo_cod_articulo_seq";
     public static String MOVIMIENTOS_HISTORICO_MOVIMIENTOS_COD_MOVIMIENTO_SEQ = "movimientos.historico_movimientos_cod_movimiento_seq";
+    public static String MOVIMIENTOS_PRESTAMO_COD_PRESTAMO_SEQ = "movimientos.movimientos_prestamo_cod_prestamo_seq";
     
     public static boolean VALIDA_PK = true;
     public static boolean NO_VALIDA_PK = false;

@@ -10,6 +10,7 @@ import com.gestoreventos.entity.UtilLog;
 import com.gestoreventos.entity.UtilMSG;
 import com.gestoreventos.movimientos.HistoricoMovimientos;
 import com.gestoreventos.movimientos.Inventario;
+import com.gestoreventos.movimientos.Prestamo;
 import com.gestoreventos.movimientos.RazonMovimiento;
 import com.gestoreventos.movimientos.dao.MovimientoDAO;
 import com.gestoreventos.publico.Articulo;
@@ -18,11 +19,13 @@ import com.gestoreventos.publico.Marca;
 import com.gestoreventos.publico.Menu;
 import com.gestoreventos.publico.Proveedor;
 import com.gestoreventos.publico.Submenu;
+import com.gestoreventos.publico.Submenucategoria;
 import com.gestoreventos.publico.Ubicacion;
 import com.gestoreventos.publico.dao.ArticuloDAO;
 import com.gestoreventos.publico.dao.ProveedorDAO;
 import com.gestoreventos.publico.dao.UbicacionDAO;
 import java.util.Collection;
+import java.util.List;
 
 
 /**
@@ -35,18 +38,15 @@ public class GestorMovimiento extends Gestor {
         super();
     }
 
-    /*public void guardarInventario(Inventario inv) throws Exception {
-         try {
+    public void guardarInventario(Inventario inv) throws Exception {
+        try {
             this.abrirConexion();
-             MovimientoDAO movimientoDAO=new MovimientoDAO(conexion);             
-             if(inv.getHistoricoMovimiento().getCodMoviento()==null){
-                movimientoDAO.ingresoPrimerHistorico(inv);
-             }             
+             MovimientoDAO movimientoDAO=new MovimientoDAO(conexion);                           
              movimientoDAO.guardarInventario(inv);
         } finally {
             this.cerrarConexion();
         }
-    }*/
+    }
 
     public void validarInventario(Inventario inv) {
         
@@ -58,9 +58,10 @@ public class GestorMovimiento extends Gestor {
             if(inv.getArticulo().getEdoArticulo()==null){
                 UtilMSG.addSuccessMsg("Seleccione Estado");
             }
-            if(inv.getUltMantenimiento()==null){
-                UtilMSG.addSuccessMsg("Seleccione Fecha Ultimo Mantenimiento");
+            if(inv.getSerial()=="" || inv.getSerial()==null){
+                UtilMSG.addSuccessMsg("Ingrese Serial");
             }
+            
             
             
         } catch (Exception e) {
@@ -120,6 +121,17 @@ public class GestorMovimiento extends Gestor {
             this.cerrarConexion();
         }
     }
+    
+    public Collection<? extends Inventario> cargarInventariosUbicacionList(Integer codUbicacion) throws Exception {
+        try {
+            this.abrirConexion();
+            MovimientoDAO movimientoDAO = new MovimientoDAO(conexion);
+            return movimientoDAO.cargarInventariosUbicacionList(codUbicacion);
+        } finally {
+            this.cerrarConexion();
+        }
+    }
+    
 
     public Collection<? extends RazonMovimiento> cargarRazonesMovimiento() throws Exception {
         try {
@@ -156,29 +168,7 @@ public class GestorMovimiento extends Gestor {
             UtilLog.generarLog(this.getClass(), e);
         }
     }
-
-    /*public void guardarMantenimiento(HistoricoMovimientos historicoMovimiento) throws Exception {
-        
-        try {
-            this.abrirConexion();
-             MovimientoDAO movimientoDAO=new MovimientoDAO(conexion);                          
-             movimientoDAO.guardarMantnimiento(historicoMovimiento);
-        } finally {
-            this.cerrarConexion();
-        }
-        
-    }
-
-    public Collection<? extends HistoricoMovimientos> cargarMantenimientosList() throws Exception {
-        try {
-            this.abrirConexion();
-            MovimientoDAO movimientoDAO = new MovimientoDAO(conexion);
-            return movimientoDAO.cargarMantenimientosList();
-        } finally {
-            this.cerrarConexion();
-        }
-    }*/
-
+    
     public Collection<? extends Menu> cargarItemsMenu() throws Exception {
         try {
             this.abrirConexion();
@@ -197,17 +187,87 @@ public class GestorMovimiento extends Gestor {
         } finally {
             this.cerrarConexion();
         }        
-    }
+    }   
 
-    public String cargarDireccionDialogo(Submenu submenu) throws Exception {
+    public Collection<? extends Submenucategoria> cargaSubmenuCategoria(Submenu submenu) throws Exception {
         try {
             this.abrirConexion();
             MovimientoDAO movimientoDAO = new MovimientoDAO(conexion);
-            return movimientoDAO.cargarDireccionDialogo(submenu);
+            return movimientoDAO.cargarSubmenucategoria(submenu);
         } finally {
             this.cerrarConexion();
         }
     }
+
+    public void validarPrestamo(Prestamo p) {
+        try {
+            
+            if(p.getInventario().getSerial()==null || p.getInventario().getSerial()==""){
+                UtilMSG.addSuccessMsg("Seleccione Articulo Del Inventario");
+            }
+            if(p.getProveedor()==null){
+                UtilMSG.addSuccessMsg("Seleccione proveedor");
+            }
+            if(p.getFechaDevolucion()==null){
+                UtilMSG.addSuccessMsg("Seleccione Fecha De Devolucion");
+            }                   
+            
+        } catch (Exception e) {
+            UtilMSG.addSupportMsg();
+            UtilLog.generarLog(this.getClass(), e);
+        }
+    }
+
+    public void guardarPrestamo(Prestamo prestamo) throws Exception {
+        try {
+            this.abrirConexion();
+             MovimientoDAO movimientoDAO=new MovimientoDAO(conexion);                           
+             movimientoDAO.guardarPrestamo(prestamo);
+        } finally {
+            this.cerrarConexion();
+        }
+    }
+
+    public Collection<? extends Prestamo> cargarPrestamosSalidaList() throws Exception {
+        try {
+            this.abrirConexion();
+            MovimientoDAO movimientoDAO = new MovimientoDAO(conexion);
+            return movimientoDAO.cargarPrestamoSalidaList();
+        } finally {
+            this.cerrarConexion();
+        }        
+    }
+    
+    public Collection<? extends Prestamo> cargarPrestamosIngresoList() throws Exception {
+        try {
+            this.abrirConexion();
+            MovimientoDAO movimientoDAO = new MovimientoDAO(conexion);
+            return movimientoDAO.cargarPrestamoIngresoList();
+        } finally {
+            this.cerrarConexion();
+        }        
+    }
+
+    public Collection<? extends Prestamo> cargarPrestamosTotalList() throws Exception {
+        try {
+            this.abrirConexion();
+            MovimientoDAO movimientoDAO = new MovimientoDAO(conexion);
+            return movimientoDAO.cargarPrestamoTotales();
+        } finally {
+            this.cerrarConexion();
+        }
+    }
+
+    public Collection<? extends Prestamo> cargarPrestamos(String condicionesConsulta) throws Exception {
+        try {
+            this.abrirConexion();
+            MovimientoDAO movimientoDAO = new MovimientoDAO(conexion);
+            return movimientoDAO.cargarPrestamos(condicionesConsulta);
+        } finally {
+            this.cerrarConexion();
+        }
+    }
+    
 
     
 }

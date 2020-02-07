@@ -35,14 +35,12 @@ public class Inventario implements Serializable, Cloneable {
     @Column(name = "cod_articulo")
     private Integer codArticulo;            
     @Column(name = "observacion")
-    private String observacion;
-    @Column(name = "estado")        
-    private Boolean estado;
-    @Column(name = "ult_mantenimiento")
-    private Date ultMantenimiento;
+    private String observacion;        
     @Column(name = "fecha_compra")
     private Date fechaCompra;    
     
+    
+    private EstadoActualArticulo edoActual=new EstadoActualArticulo();
     private Articulo articulo=new Articulo();
     private Marca marca=new Marca();
     private Ubicacion ubicacion=new Ubicacion();
@@ -53,6 +51,25 @@ public class Inventario implements Serializable, Cloneable {
     public Inventario() {        
         
     }
+
+    public Inventario(String serial, Integer codArticulo, String observacion, Date fechaCompra) {
+        this.serial = serial;
+        this.codArticulo = codArticulo;
+        this.observacion = observacion;
+        this.fechaCompra = fechaCompra;
+    }
+    
+    
+
+    public EstadoActualArticulo getEdoActual() {
+        return edoActual;
+    }
+
+    public void setEdoActual(EstadoActualArticulo edoActual) {
+        this.edoActual = edoActual;
+    }
+
+    
 
     public String getSerial() {
         return serial;
@@ -78,13 +95,7 @@ public class Inventario implements Serializable, Cloneable {
         this.historicoMovimiento = historicoMovimiento;
     }
 
-    public Date getUltMantenimiento() {
-        return ultMantenimiento;
-    }
 
-    public void setUltMantenimiento(Date ultMantenimiento) {
-        this.ultMantenimiento = ultMantenimiento;
-    }
 
     public Articulo getArticulo() {
         return articulo;
@@ -108,16 +119,6 @@ public class Inventario implements Serializable, Cloneable {
 
     public void setEdoArticulo(EstadoArticulo edoArticulo) {
         this.edoArticulo = edoArticulo;
-    }
-    
-    
-
-    public Boolean getEstado() {
-        return estado;
-    }
-
-    public void setEstado(Boolean estado) {
-        this.estado = estado;
     }
 
     public String getObservacion() {

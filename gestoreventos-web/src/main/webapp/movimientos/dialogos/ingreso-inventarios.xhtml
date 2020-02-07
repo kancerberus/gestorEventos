@@ -12,14 +12,15 @@
                 <center>
                     <h:panelGrid columns="4" >
                     <h:outputText value="Articulo" style="font-weight: bolder"/>                    
-                    <h:outputText value="Estado Articulo" style="font-weight: bolder"/>
-                    <h:outputText value="Ubicacion:" style="font-weight: bolder"/>     
-                    <h:outputText value="Ultimo Mantenimiento" style="font-weight: bolder"/>
+                    <h:outputText value="Serial:" style="font-weight: bolder"/>                                        
+                    <h:outputText value="Estado Articulo:" style="font-weight: bolder"/>
+                    <h:outputText value="Ubicacion:" style="font-weight: bolder"/>                         
+                    
                     
                     
                     
                     <p:selectOneMenu id="advanced" value="#{uiMovimientos.inventario.articulo}" converter="convertidorGenerico" panelStyle="width:180px"
-                                effect="fade" var="articulo" style="width:160px" filter="true" filterMatchMode="startsWith">
+                                effect="fade" var="articulo" style="width:300px" filter="true" filterMatchMode="startsWith">
                         <f:selectItem itemLabel="Nombre..." itemValue="" /> 
                         <f:selectItems value="#{uiMovimientos.articulosList}" var="art" itemLabel="#{art.descripcion}" itemValue="#{art}" />
 
@@ -48,6 +49,9 @@
                         </f:facet>
                     </p:selectOneMenu>
                     
+                    
+                    <p:inputText value="#{uiMovimientos.inventario.serial}" placeholder="Serial articulo" style="width: 300px"/>                    
+                    
                     <p:selectOneMenu id="somItemsEstado" value="#{uiMovimientos.inventario.edoArticulo}" converter="convertidorGenerico"
                                      style="text-align: center;width: 180px;">  
                         <f:selectItem itemLabel="Seleccione..." itemValue="" /> 
@@ -58,18 +62,15 @@
                                      style="text-align: center;width: 180px;">  
                         <f:selectItem itemLabel="Seleccione..." itemValue="" /> 
                         <f:selectItems value="#{uiMovimientos.ubicacionesList}" var="u" itemLabel="#{u.nombre}" itemValue="#{u}"/>
-                    </p:selectOneMenu>
-
-                    <p:calendar value="#{uiMovimientos.inventario.ultMantenimiento}" placeholder="Ultimo Mantenimiento" pattern="dd-MM-yyyy"/>                                                            
-                                                            
-                    <h:outputText value="Estado" style="font-weight: bolder"/>
-                    <h:outputText value="Observaciones" style="font-weight: bolder"/>                    
-                    <h:outputText value="" style="font-weight: bolder"/>                    
-                    <h:outputText value="" style="font-weight: bolder"/>                    
+                    </p:selectOneMenu>    
                     
+                    <h:outputText value="Fecha Compra" style="font-weight: bolder"/>        
+                    <h:outputText value="Observaciones" style="font-weight: bolder"/>                                        
+                    <h:outputText value="" style="font-weight: bolder"/>                    
+                    <h:outputText value="" style="font-weight: bolder"/>                                        
                     
-                    <p:selectBooleanButton id="value1" value="#{uiMovimientos.inventario.estado}" onLabel="Activo" offLabel="Inactivo" style="width:150px" />
-                    <p:inputText value="#{uiMovimientos.inventario.observacion}" placeholder="Observacion" style="width: 180px"/>                    
+                    <p:calendar value="#{uiMovimientos.inventario.fechaCompra}" placeholder="Fecha Compra" pattern="dd-MM-yyyy"/>                                                                                                                        
+                    <p:inputText value="#{uiMovimientos.inventario.observacion}" placeholder="Observaciones" style="width: 300px"/>                    
                     
                     
                 </h:panelGrid>
@@ -81,7 +82,7 @@
                 <h:panelGrid columns="2">
                     <p:commandButton value="Crear / Modificar" action="#{uiMovimientos.guardarInventario()}"
                                      icon="ui-icon-disk"
-                                     update="formSubmenu"/>
+                                     update="formSubmenu:opIngresoInventarios"/>
                     
                 </h:panelGrid>  
                 </center>
@@ -98,19 +99,20 @@
                             <p:column headerText="Serial"  filterBy="#{varInventario.articulo.serial}"  style="width: 150px"/>                            
                             <p:column headerText="Descripcion Articulo"  filterBy="#{varInventario.articulo.descripcion}" style="width: 200px"  />                            
                             <p:column  headerText="Ubicacion" style="width: 150px"/>
-                            <p:column  headerText="Estado Articulo" style="width: 150px"/>
-                            <p:column  headerText="Ultimo Mantenimiento" style="width: 150px"/>
+                            <p:column  headerText="Estado Articulo" style="width: 150px"/>                            
+                            <p:column  headerText="Fecha Compra" style="width: 150px"/>
+                            <p:column  headerText="Fecha Ultimo Mantenimiento" style="width: 150px"/>
                             <p:column  headerText="Observacion"  style="width: 250px"/>
-                            <p:column  headerText="Estado" style="width: 150px"/>                            
+                            
                             
                                                                                  
                         </p:row> 
                     </p:columnGroup>
 
                     <p:column>
-                        <p:commandButton icon="ui-icon-pencil" title="Modificar Inventario" update="formSubmenu"
+                        <p:commandButton icon="ui-icon-pencil" title="Modificar Inventario" update="formSubmenu:opIngresoInventarios"
                                          action="#{uiMovimientos.subirInventario()}" />                    
-                        <p:commandButton icon="ui-icon-trash" title="Eliminar Inventario" update="formSubmenu"
+                        <p:commandButton icon="ui-icon-trash" title="Eliminar Inventario" update="formSubmenu:opIngresoInventarios"
                                          action="#{uiMovimientos.eliminarInventario()}" />
                     </p:column>
                     <p:column >
@@ -124,16 +126,16 @@
                     </p:column>
                     <p:column>
                         <h:outputText value="#{varInventario.edoArticulo.nombre}"/>
+                    </p:column>                    
+                    <p:column>
+                        <h:outputText value="#{varInventario.fechaCompra}"/>
                     </p:column>
                     <p:column>
-                        <h:outputText value="#{varInventario.ultMantenimiento}"/>
+                        <h:outputText value=""/>
                     </p:column>
                     <p:column>
                         <h:outputText value="#{varInventario.observacion}"/>
-                    </p:column>
-                    <p:column>
-                        <h:outputText value="#{varInventario.estado ? 'Activo':'Inactivo'}"/>
-                    </p:column>
+                    </p:column>                    
                     
                 </p:dataTable>
 

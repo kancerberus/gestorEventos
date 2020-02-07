@@ -7,10 +7,11 @@ package com.gestoreventos.movimientos;
 import com.gestoreventos.publico.*;
 import com.gestoreventos.controller.GestorGeneral;
 import com.gestoreventos.entity.Dialogo;
-
+import com.gestoreventos.entity.App;
 import com.gestoreventos.entity.UtilJSF;
 import com.gestoreventos.entity.UtilLog;
 import com.gestoreventos.entity.UtilMSG;
+import com.gestoreventos.entity.UtilTexto;
 import com.gestoreventos.movimientos.controlador.GestorMovimiento;
 import com.gestoreventos.publico.controlador.GestorArticulo;
 import com.gestoreventos.publico.controlador.GestorUbicacion;
@@ -39,24 +40,35 @@ public class UIMovimientos {
     
     
     private Articulo articulo;
-    private Inventario inventario;
+    private Inventario inventario=new Inventario()           ;
     private HistoricoMovimientos historicoMovimiento=new HistoricoMovimientos();
     private ArrayList<Articulo> articulosList=new ArrayList<>();
-    private ArrayList<Inventario> inventariosList=new ArrayList<>();
+    private ArrayList<Inventario> inventariosList=new ArrayList<>();    
+    private ArrayList<Inventario> inventariosUbicacionList=new ArrayList<>();
     private ArrayList<HistoricoMovimientos> mantenimientosList=new ArrayList<>();
     private ArrayList<Marca> marcasList=new ArrayList<>();
     private ArrayList<EstadoArticulo> estadoArticuloList=new ArrayList<>();
     private ArrayList<Ubicacion> ubicacionesList=new ArrayList<>();    
     private ArrayList<RazonMovimiento> razonesMovimientoList=new ArrayList<>();    
+    private ArrayList<Prestamo> prestamosSalidaList=new ArrayList<>();    
+    private ArrayList<Prestamo> prestamosIngresoList=new ArrayList<>();    
+    private ArrayList<Prestamo> prestamosTotalList=new ArrayList<>();    
+    
     
     private GestorArticulo gestorArticulo;
     private GestorMovimiento gestorMovimiento;
     private GestorGeneral gestorGeneral;
     private Menu menu;
     private Submenu submenu;
+    private Submenucategoria submenucategoria;
+    private Prestamo prestamo=new Prestamo();
+    private Ubicacion ubicacion;
     
     private ArrayList<Menu> itemsMenu=new ArrayList<>();
     private ArrayList<Submenu> itemsSubmenu=new ArrayList<>();
+    private ArrayList<Submenucategoria> itemsSubmenucategoria=new ArrayList<>();            
+    private Integer tamañoLista=1;
+    private Integer tamListacat=0;
     
 
     public void cancelar() {
@@ -69,12 +81,14 @@ public class UIMovimientos {
         this.cargarEstadosArticuloList();
         this.cargarUbicacionesList();   
         this.cargarInventariosList();
-        this.cargarRazonMovimientosList();
+        
 //        this.cargarMantenimientosList();       
         this.cargarListaMenu();
         
+        ubicacion=new Ubicacion();
         articulo=new Articulo();
         inventario=new Inventario();
+        prestamo=new Prestamo();
         inventario.setArticulo(new Articulo());
         submenu=new Submenu();
         inventario.getArticulo().setEdoArticulo(new EstadoArticulo());
@@ -87,16 +101,18 @@ public class UIMovimientos {
         articulo=new Articulo();
         inventario=new Inventario();
         inventario.setArticulo(new Articulo());
+        prestamo=new Prestamo();
+        ubicacion=new Ubicacion();
         
         inventario.getArticulo().setEdoArticulo(new EstadoArticulo());
         historicoMovimiento=new HistoricoMovimientos();
         this.cargarListaMenu();
         this.cargarArticulosList();
         this.cargarEstadosArticuloList();
-        this.cargarInventariosList();
-        this.cargarRazonMovimientosList();
-//        this.cargarMantenimientosList();
+        this.cargarInventariosList();        
     }
+    
+    
     
     public void guardarInventario() throws Exception{        
         
@@ -107,7 +123,7 @@ public class UIMovimientos {
             gestorGeneral=new GestorGeneral();  
             
             gestorMovimiento.validarInventario(inventario);
-//            gestorMovimiento.guardarInventario(inventario);
+            gestorMovimiento.guardarInventario(inventario);
             
             UtilMSG.addSuccessMsg("Guardado Con Exito");
             inventario=new Inventario();
@@ -120,6 +136,123 @@ public class UIMovimientos {
             UtilLog.generarLog(this.getClass(), e);
         }
         
+    }
+    
+    public void guardarPrestamoSalida(){
+        try {
+            gestorMovimiento=new GestorMovimiento();
+            gestorGeneral=new GestorGeneral();
+            
+            
+            if(prestamo.getCodPrestamo()==null){
+                prestamo.setCodPrestamo(gestorGeneral.nextval(GestorGeneral.MOVIMIENTOS_PRESTAMO_COD_PRESTAMO_SEQ).intValue());                
+            }
+            
+            prestamo.setIngreso(false);//false Prestamo SALIDA// True prestamo de INGRESO
+            prestamo.setEnPrestamo(true);//TRUE Prestamo EN PRESTAMO// FALSE prestamo DEVUELTO                        
+            gestorMovimiento.validarPrestamo(prestamo);
+            gestorMovimiento.guardarPrestamo(prestamo);
+            
+            UtilMSG.addSuccessMsg("Guardado Con Exito");
+            prestamo=new Prestamo();
+
+            this.cargarPrestamosSalidaList();
+            
+            
+        } catch (Exception e) {
+            UtilMSG.addSupportMsg();
+            UtilLog.generarLog(this.getClass(), e);
+        }
+            
+    }
+    
+    public void guardarPrestamoIngreso(){
+        try {
+            gestorMovimiento=new GestorMovimiento();
+            gestorGeneral=new GestorGeneral();
+            
+            
+            if(prestamo.getCodPrestamo()==null){
+                prestamo.setCodPrestamo(gestorGeneral.nextval(GestorGeneral.MOVIMIENTOS_PRESTAMO_COD_PRESTAMO_SEQ).intValue());                
+            }
+            
+            prestamo.setIngreso(true);//false Prestamo SALIDA// True prestamo de INGRESO
+            prestamo.setEnPrestamo(true);//TRUE Prestamo EN PRESTAMO// FALSE prestamo DEVUELTO                        
+            gestorMovimiento.validarPrestamo(prestamo);
+            gestorMovimiento.guardarPrestamo(prestamo);
+            
+            UtilMSG.addSuccessMsg("Guardado Con Exito");
+            prestamo=new Prestamo();
+
+            this.cargarPrestamosIngresoList();
+            
+            
+        } catch (Exception e) {
+            UtilMSG.addSupportMsg();
+            UtilLog.generarLog(this.getClass(), e);
+        }
+            
+    }
+    
+    private List<String> filtrarOpcionesSeleccionadas() throws Exception {
+        List<String> condicionesConsulta = new ArrayList<>();
+        condicionesConsulta.add(App.CONDICION_WHERE);
+        
+        
+        String tipo=prestamo.getIngreso().toString();
+        String proveedor=prestamo.getProveedor().getCodProveedor().toString();
+        
+        
+        condicionesConsulta.add(Prestamo.TIPO_PRESTAMO_INGRESO.replace("?", tipo));
+        condicionesConsulta.add(" AND ");
+        condicionesConsulta.add(Prestamo.PROVEEDOR_COD_PROVEEDOR.replace("?", proveedor));
+        
+        
+        return condicionesConsulta;
+    }
+    
+    public void consultarPrestamosTipo(){
+        try {
+            gestorMovimiento=new GestorMovimiento();
+            List<String> condicionesConsulta = this.filtrarOpcionesSeleccionadas();
+            prestamosTotalList.clear();
+            
+            prestamosTotalList.addAll(gestorMovimiento.cargarPrestamos(UtilTexto.listToString(condicionesConsulta,UtilTexto.SEPARADOR_ESPACIO)));
+            
+        } catch (Exception e) {
+            UtilMSG.addSupportMsg();
+            UtilLog.generarLog(this.getClass(), e);
+        }
+    }
+        
+    
+    
+    public void cargarPrestamosSalidaList(){
+        
+        try {
+            prestamosSalidaList.clear();
+            gestorMovimiento=new GestorMovimiento();
+            
+            prestamosSalidaList.addAll(gestorMovimiento.cargarPrestamosSalidaList());
+            
+        } catch (Exception e) {
+            UtilMSG.addSupportMsg();
+            UtilLog.generarLog(this.getClass(), e);
+        }
+    }
+    
+    public void cargarPrestamosIngresoList(){
+        
+        try {
+            prestamosIngresoList.clear();
+            gestorMovimiento=new GestorMovimiento();
+            
+            prestamosIngresoList.addAll(gestorMovimiento.cargarPrestamosIngresoList());
+            
+        } catch (Exception e) {
+            UtilMSG.addSupportMsg();
+            UtilLog.generarLog(this.getClass(), e);
+        }
     }
     
     public void cargarListaMenu(){
@@ -212,6 +345,20 @@ public class UIMovimientos {
         }
     }
     
+    public void cargarInventariosUbicacionList(){
+        try {
+            
+            inventariosUbicacionList.clear();
+            
+            gestorMovimiento=new GestorMovimiento();            
+            inventariosUbicacionList.addAll(gestorMovimiento.cargarInventariosUbicacionList(ubicacion.getCodUbicacion()));                        
+            
+        } catch (Exception e) {
+            UtilMSG.addSupportMsg();
+            UtilLog.generarLog(this.getClass(), e);
+        }
+    }
+    
     
     public void cargarArticulosList(){
         try {
@@ -279,33 +426,8 @@ public class UIMovimientos {
             UtilLog.generarLog(this.getClass(), e);
         }
         
-    }
+    }   
     
-    public void cargarRazonMovimientosList(){
-        try {
-            
-            razonesMovimientoList=new ArrayList<>();
-            gestorMovimiento=new GestorMovimiento();
-            razonesMovimientoList.addAll(gestorMovimiento.cargarRazonesMovimiento());
-            
-        } catch (Exception e) {
-            UtilMSG.addSupportMsg();
-            UtilLog.generarLog(this.getClass(), e);
-        }
-    }
-    
-    /*public void cargarMantenimientosList(){
-        try {
-            
-            mantenimientosList=new ArrayList<>();
-            gestorMovimiento=new GestorMovimiento();
-            mantenimientosList.addAll(gestorMovimiento.cargarMantenimientosList());
-            
-        } catch (Exception e) {
-            UtilMSG.addSupportMsg();
-            UtilLog.generarLog(this.getClass(), e);
-        }
-    }*/
     
     public String cargarSubmenuList(){
         try {
@@ -315,7 +437,7 @@ public class UIMovimientos {
             menu=(Menu) UtilJSF.getBean("varMenu");
             
             itemsSubmenu.addAll(gestorMovimiento.cargarSubmenu(menu));
-            
+            tamañoLista=itemsSubmenu.size();
             return ("/movimientos/submenu-eventos.xhtml?faces-redirect=true");
             
         } catch (Exception e) {
@@ -325,28 +447,169 @@ public class UIMovimientos {
         return ("/movimientos/submenu-eventos.xhtml?faces-redirect=true");
     }
     
-    public String muestraDialogo(){
+    public String muestraDialogoSubmenu(){
         try {
             gestorMovimiento=new GestorMovimiento();
+            itemsSubmenucategoria.clear();
+            
             
             submenu=(Submenu) UtilJSF.getBean("varSubmenu");
             
-            String dirDialogo=gestorMovimiento.cargarDireccionDialogo(submenu);
+            
+            itemsSubmenucategoria.addAll(gestorMovimiento.cargaSubmenuCategoria(submenu));
+            tamListacat=itemsSubmenucategoria.size();
+            
+            if(submenu.getDirDialogo()==null){
+                
+                return ("/movimientos/categoria-eventos.xhtml?faces-redirect=true");
+                
+            }else{
+                
+                
+            
+                Dialogo dialogo = new Dialogo(submenu.getDirDialogo(), submenu.getNombre(), "clip", Dialogo.WIDTH_AUTO);
+                UtilJSF.setBean("dialogo", dialogo, UtilJSF.SESSION_SCOPE);
+                UtilJSF.execute("PF('dialog').show();");
+            
+            }
             
             
             
-            
-            Dialogo dialogo = new Dialogo(dirDialogo, submenu.getNombre(), "clip", Dialogo.WIDTH_AUTO);
-            UtilJSF.setBean("dialogo", dialogo, UtilJSF.SESSION_SCOPE);
-            UtilJSF.execute("PF('dialog').show();");
             this.cargarArticulosList();            
             this.cargarEstadosArticuloList();
             this.cargarUbicacionesList();   
             this.cargarInventariosList();                        
         } catch (Exception e) {
-            UtilMSG.addSuccessMsg("En construccion");
+            UtilMSG.addSupportMsg();
+            UtilLog.generarLog(this.getClass(), e);
         }
         return null;
+    }
+    
+    public String mostrarDialogoCategoria(){        
+        try {
+            gestorMovimiento=new GestorMovimiento();                                    
+            
+            submenucategoria=(Submenucategoria) UtilJSF.getBean("varCategoria");
+            
+            ubicacion=new Ubicacion();
+            inventario=new Inventario();
+            prestamo=new Prestamo();
+            
+            Dialogo dialogo = new Dialogo(submenucategoria.getDirDialogo(), submenucategoria.getNombre(), "clip", Dialogo.WIDTH_AUTO);
+            UtilJSF.setBean("dialogo", dialogo, UtilJSF.SESSION_SCOPE);
+            UtilJSF.execute("PF('dialog').show();");
+            this.cargarPrestamosTotalList();
+            this.cargarPrestamosSalidaList();
+            this.cargarPrestamosIngresoList();
+            
+        } catch (Exception e) {
+            UtilMSG.addSupportMsg();
+            UtilLog.generarLog(this.getClass(), e);
+        }
+        return null;    
+    }
+    
+    public void cargarPrestamosTotalList(){
+        try {
+            prestamosTotalList.clear();
+            gestorMovimiento=new GestorMovimiento();
+            
+            prestamosTotalList.addAll(gestorMovimiento.cargarPrestamosTotalList());
+            
+            
+        } catch (Exception e) {
+            UtilMSG.addSupportMsg();
+            UtilLog.generarLog(this.getClass(), e);
+        }
+    }
+
+    public ArrayList<Prestamo> getPrestamosTotalList() {
+        return prestamosTotalList;
+    }
+
+    public void setPrestamosTotalList(ArrayList<Prestamo> prestamosTotalList) {
+        this.prestamosTotalList = prestamosTotalList;
+    }
+
+    public ArrayList<Prestamo> getPrestamosIngresoList() {
+        return prestamosIngresoList;
+    }
+
+    public void setPrestamosIngresoList(ArrayList<Prestamo> prestamosIngresoList) {
+        this.prestamosIngresoList = prestamosIngresoList;
+    }
+
+    public Ubicacion getUbicacion() {
+        return ubicacion;
+    }
+
+    public void setUbicacion(Ubicacion ubicacion) {
+        this.ubicacion = ubicacion;
+    }
+
+    public ArrayList<Inventario> getInventariosUbicacionList() {
+        return inventariosUbicacionList;
+    }
+
+    public void setInventariosUbicacionList(ArrayList<Inventario> inventariosUbicacionList) {
+        this.inventariosUbicacionList = inventariosUbicacionList;
+    }
+
+    public ArrayList<Prestamo> getPrestamosSalidaList() {
+        return prestamosSalidaList;
+    }
+
+    public void setPrestamosSalidaList(ArrayList<Prestamo> prestamosSalidaList) {
+        this.prestamosSalidaList = prestamosSalidaList;
+    }
+
+    public Prestamo getPrestamo() {
+        return prestamo;
+    }
+
+    public void setPrestamo(Prestamo prestamo) {
+        this.prestamo = prestamo;
+    }
+
+    public Integer getTamListacat() {
+        return tamListacat;
+    }
+
+    public void setTamListacat(Integer tamListacat) {
+        this.tamListacat = tamListacat;
+    }
+
+    public Submenu getSubmenu() {
+        return submenu;
+    }
+
+    public void setSubmenu(Submenu submenu) {
+        this.submenu = submenu;
+    }
+
+    public ArrayList<Submenucategoria> getItemsSubmenucategoria() {
+        return itemsSubmenucategoria;
+    }
+
+    public void setItemsSubmenucategoria(ArrayList<Submenucategoria> itemsSubmenucategoria) {
+        this.itemsSubmenucategoria = itemsSubmenucategoria;
+    }
+
+    public Submenucategoria getSubmenucategoria() {
+        return submenucategoria;
+    }
+
+    public void setSubmenucategoria(Submenucategoria submenucategoria) {
+        this.submenucategoria = submenucategoria;
+    }
+
+    public Integer getTamañoLista() {
+        return tamañoLista;
+    }
+
+    public void setTamañoLista(Integer tamañoLista) {
+        this.tamañoLista = tamañoLista;
     }
 
     public ArrayList<Submenu> getItemsSubmenu() {

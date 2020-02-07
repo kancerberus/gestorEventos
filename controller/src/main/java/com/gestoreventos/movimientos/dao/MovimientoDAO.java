@@ -8,14 +8,17 @@ package com.gestoreventos.movimientos.dao;
 import com.gestoreventos.controller.GestorGeneral;
 import com.gestoreventos.movimientos.HistoricoMovimientos;
 import com.gestoreventos.movimientos.Inventario;
+import com.gestoreventos.movimientos.Prestamo;
 import com.gestoreventos.movimientos.RazonMovimiento;
 import com.gestoreventos.publico.dao.*;
 import com.gestoreventos.publico.Articulo;
+import com.gestoreventos.publico.EstadoActualArticulo;
 import com.gestoreventos.publico.EstadoArticulo;
 import com.gestoreventos.publico.Marca;
 import com.gestoreventos.publico.Menu;
 import com.gestoreventos.publico.Proveedor;
 import com.gestoreventos.publico.Submenu;
+import com.gestoreventos.publico.Submenucategoria;
 import com.gestoreventos.publico.Ubicacion;
 
 import conexion.Consulta;
@@ -38,18 +41,18 @@ public class MovimientoDAO {
         this.conexion = conexion;
     } 
 
-    /*public void guardarInventario(Inventario inv) throws SQLException {
+    public void guardarInventario(Inventario inv) throws SQLException {
         Consulta consulta = null;
         try {
             consulta = new Consulta(this.conexion);
             StringBuilder sql = new StringBuilder(
                     "INSERT INTO movimientos.inventario("
-                    + " serial, cod_ubicacion, cod_estado_articulo,observacion, estado, ult_mantenimiento)"
-                    + " VALUES ('" + inv.getArticulo().getSerial()+"','"+inv.getUbicacion().getCodUbicacion()+"','"+inv.getEdoArticulo().getCodEstadoArticulo()+"', "
-                            + "'"+inv.getObservacion()+"','"+inv.getEstado()+"','"+inv.getUltMantenimiento()+"')"
+                    + " serial, cod_ubicacion, cod_estado_articulo,observacion,cod_estado_actual, fecha_compra, cod_articulo)"
+                    + " VALUES ('" + inv.getSerial()+"','"+inv.getUbicacion().getCodUbicacion()+"','"+inv.getEdoArticulo().getCodEstadoArticulo()+"', "
+                    + "'"+inv.getObservacion()+"','2','"+inv.getFechaCompra()+"','"+inv.getArticulo().getCodArticulo()+"')"
                     + " ON CONFLICT (serial) DO UPDATE SET "
-                    + " cod_ubicacion = EXCLUDED.cod_ubicacion , cod_estado_articulo=EXCLUDED.cod_estado_articulo, observacion=EXCLUDED.observacion, "
-                    + " ult_mantenimiento=EXCLUDED.ult_mantenimiento, estado=EXCLUDED.estado "                    
+                    + " cod_ubicacion = EXCLUDED.cod_ubicacion , cod_estado_actual=EXCLUDED.cod_estado_actual, cod_estado_articulo=EXCLUDED.cod_estado_articulo,"
+                    + " observacion=EXCLUDED.observacion, fecha_compra=EXCLUDED.fecha_compra, cod_articulo=EXCLUDED.cod_articulo "
             );
             consulta.actualizar(sql);
         } finally {
@@ -57,7 +60,7 @@ public class MovimientoDAO {
                 consulta.desconectar();
             }
         }
-    }*/
+    }
 
     public Collection<? extends Inventario> cargarInventarios() throws SQLException {
         ResultSet rs = null;
@@ -65,25 +68,29 @@ public class MovimientoDAO {
         try {
             consulta = new Consulta(this.conexion);
             StringBuilder sql = new StringBuilder(
-                    " select inv.serial serial, ar.cod_articulo codar,ar.descripcion descart, ub.cod_ubicacion codub, ub.nombre nomub, " +
-                    " edoart.cod_estado_articulo codedoart, edoart.nombre nomedoart, inv.observacion obs, inv.ult_mantenimiento ultm, " +
-                    " inv.estado edoinv " +
-                    " from movimientos.inventario inv " +
-                    " join articulo ar using(cod_articulo) " +
+                    " select inv.serial serial, ar.cod_articulo codar,ar.descripcion descart, ar.modelo modeloart, marca.cod_marca codmarca, marca.nombre nommarca, ub.cod_ubicacion codub, ub.nombre nomub, " +
+                    " edoart.cod_estado_articulo codedoart, edoart.nombre nomedoart, inv.observacion obs,inv.fecha_compra fechCompra,"+
+                    " eaa.cod_estado_actual codeaa, eaa.nombre nomeaa, eaa.sigla eaasigla" +                    
+                    " from movimientos.inventario inv "+
+                    " join estado_actual_articulo eaa using (cod_estado_actual)" +
+                    " join articulo ar using(cod_articulo) "+
+                    " join marca marca using (cod_marca) " +
                     " join ubicaciones ub using (cod_ubicacion) " +
                     " join estado_articulo edoart using (cod_estado_articulo)"
+                    
             );
             rs = consulta.ejecutar(sql);
             ArrayList<Inventario> inventarios = new ArrayList<>();
             while (rs.next()) {
                 Inventario inv= new Inventario();
                 inv.setSerial(rs.getString("serial"));
-                inv.setArticulo(new Articulo(rs.getInt("codar"), rs.getString("descart"), null, null));
+                inv.setArticulo(new Articulo(rs.getInt("codar"), rs.getString("descart"), rs.getString("modeloart"), null));
+                inv.getArticulo().setMarca(new Marca(rs.getInt("codmarca"), rs.getString("nommarca")));
                 inv.setUbicacion(new Ubicacion(rs.getInt("codub"), rs.getString("nomub"), null, null, null));
                 inv.setEdoArticulo(new EstadoArticulo(rs.getInt("codedoart"), rs.getString("nomedoart")));
-                inv.setObservacion(rs.getString("obs"));
-                inv.setEstado(rs.getBoolean("edoinv"));
-                inv.setUltMantenimiento(rs.getDate("ultm"));
+                inv.setObservacion(rs.getString("obs"));                
+                inv.setFechaCompra(rs.getDate("fechCompra"));
+                inv.setEdoActual(new EstadoActualArticulo(rs.getInt("codeaa"), rs.getString("nomeaa"), rs.getString("eaasigla")));
                 
                 inventarios.add(inv);                
             }
@@ -316,7 +323,7 @@ public class MovimientoDAO {
         try {
             consulta = new Consulta(this.conexion);
             StringBuilder sql = new StringBuilder(
-                    " select cod_menu, cod_submenu, nombre "
+                    " select cod_menu, cod_submenu, nombre, direc_dialogo "
                     + " from submenu "
                     + " where cod_menu='"+menu.getCodMenu()+"' "                    
             );
@@ -327,6 +334,8 @@ public class MovimientoDAO {
                 su.setCodSubMenu(rs.getString("cod_submenu"));
                 su.setNombre(rs.getString("nombre"));
                 su.setCodMenu(rs.getString("cod_menu"));
+                su.setDirDialogo(rs.getString("direc_dialogo"));
+                
                 
                 submenuList.add(su);                
             }
@@ -341,26 +350,75 @@ public class MovimientoDAO {
         }
     }
 
-    public String cargarDireccionDialogo(Submenu submenu) throws SQLException {
+
+
+    public Collection<? extends Submenucategoria> cargarSubmenucategoria(Submenu submenu) throws SQLException {
         ResultSet rs = null;
         Consulta consulta = null;
-        String direcDialogo="";
         try {
             consulta = new Consulta(this.conexion);
             StringBuilder sql = new StringBuilder(
-                    " select direc_dialogo "
-                    + " from submenu "
-                    + " where cod_menu='"+submenu.getCodMenu()+"' and cod_submenu='"+submenu.getCodSubMenu()+"' "                    
+                    " select cod_menu, cod_submenu, cod_categoria, nombre, direc_dialogo "
+                    + " from submenucategoria "
+                    + " where cod_menu='"+submenu.getCodMenu()+"' and cod_submenu='"+submenu.getCodSubMenu()+"' "
+                    + " ORDER BY cod_categoria asc"
             );
             rs = consulta.ejecutar(sql);
-            if(rs.next()){
-                direcDialogo=rs.getString("direc_dialogo");
-                if(direcDialogo==null){
-                    direcDialogo="dialogos/nuevo.xhtml";
-                }
-            }            
-            
-            return direcDialogo;
+            ArrayList<Submenucategoria> submenucategoriaList = new ArrayList<>();
+            while (rs.next()) {
+                Submenucategoria suc=new Submenucategoria();
+                suc.setCodSubMenu(rs.getString("cod_submenu"));
+                suc.setNombre(rs.getString("nombre"));
+                suc.setCodMenu(rs.getString("cod_menu"));
+                suc.setCodCategoria(rs.getString("cod_categoria"));
+                suc.setDirDialogo(rs.getString("direc_dialogo"));
+                submenucategoriaList.add(suc);                
+            }
+            return submenucategoriaList;
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (consulta != null) {
+                consulta.desconectar();
+            }
+        }
+    }   
+
+    public Collection<? extends Inventario> cargarInventariosUbicacionList(Integer codUbicacion) throws SQLException {
+        ResultSet rs = null;
+        Consulta consulta = null;
+        try {
+            consulta = new Consulta(this.conexion);
+            StringBuilder sql = new StringBuilder(
+                    " select inv.serial serial, ar.cod_articulo codar,ar.descripcion descart, ar.modelo modeloart, marca.cod_marca codmarca, marca.nombre nommarca, ub.cod_ubicacion codub, ub.nombre nomub, " +
+                    " edoart.cod_estado_articulo codedoart, edoart.nombre nomedoart, inv.observacion obs,inv.fecha_compra fechCompra,"+
+                    " eaa.cod_estado_actual codeaa, eaa.nombre nomeaa, eaa.sigla eaasigla" +                    
+                    " from movimientos.inventario inv "+
+                    " join estado_actual_articulo eaa using (cod_estado_actual)" +
+                    " join articulo ar using(cod_articulo) "+
+                    " join marca marca using (cod_marca) " +
+                    " join ubicaciones ub using (cod_ubicacion) " +
+                    " join estado_articulo edoart using (cod_estado_articulo)"+
+                    " where cod_ubicacion='"+codUbicacion+"' and cod_estado_actual='2'"
+                    
+            );
+            rs = consulta.ejecutar(sql);
+            ArrayList<Inventario> inventarios = new ArrayList<>();            
+            while (rs.next()) {
+                Inventario inv= new Inventario();
+                inv.setSerial(rs.getString("serial"));
+                inv.setArticulo(new Articulo(rs.getInt("codar"), rs.getString("descart"), rs.getString("modeloart"), null));
+                inv.getArticulo().setMarca(new Marca(rs.getInt("codmarca"), rs.getString("nommarca")));
+                inv.setUbicacion(new Ubicacion(rs.getInt("codub"), rs.getString("nomub"), null, null, null));
+                inv.setEdoArticulo(new EstadoArticulo(rs.getInt("codedoart"), rs.getString("nomedoart")));
+                inv.setObservacion(rs.getString("obs"));                
+                inv.setFechaCompra(rs.getDate("fechCompra"));
+                inv.setEdoActual(new EstadoActualArticulo(rs.getInt("codeaa"), rs.getString("nomeaa"), rs.getString("eaasigla")));
+                
+                inventarios.add(inv);                
+            }                        
+            return inventarios;
         } finally {
             if (rs != null) {
                 rs.close();
@@ -371,8 +429,196 @@ public class MovimientoDAO {
         }
     }
 
- 
+    public void guardarPrestamo(Prestamo pr) throws SQLException {
+        Consulta consulta = null;
+        try {
+            consulta = new Consulta(this.conexion);
+            StringBuilder sql = new StringBuilder(
+                    "INSERT INTO movimientos.prestamo("
+                    + " cod_prestamo, cod_proveedor, salida_ingreso,en_prestamo, fecha_devolucion,serial, observacion)"
+                    + " VALUES ('" + pr.getCodPrestamo()+"','"+pr.getProveedor().getCodProveedor()+"' ,'"+pr.getIngreso()+"','"+pr.getEnPrestamo()+"', "
+                    + " '"+pr.getFechaDevolucion()+"','"+pr.getInventario().getSerial()+"','"+pr.getObservacion()+"')"
+                    + " ON CONFLICT (cod_prestamo, serial) DO UPDATE SET "
+                    + " cod_prestamo = EXCLUDED.cod_prestamo , cod_proveedor=EXCLUDED.cod_proveedor, salida_ingreso=EXCLUDED.salida_ingreso,"
+                    + " en_prestamo=EXCLUDED.en_prestamo, fecha_devolucion=EXCLUDED.fecha_devolucion, serial=EXCLUDED.serial, observacion=EXCLUDED.observacion "
+            );
+            consulta.actualizar(sql);
+        } finally {
+            if (consulta != null) {
+                consulta.desconectar();
+            }
+        }
+    }
+
+    public Collection<? extends Prestamo> cargarPrestamoSalidaList() throws SQLException {
+        ResultSet rs = null;
+        Consulta consulta = null;
+        try {
+            consulta = new Consulta(this.conexion);
+            StringBuilder sql = new StringBuilder(
+                    " SELECT pre.cod_prestamo codpre, pro.cod_proveedor codpro, pro.nombre nompro, pre.en_prestamo enprestamo, pre.fecha_devolucion fechdev, " +
+                    " inv.serial serial, inv.cod_estado_articulo codedoart, edoart.nombre nomedoart,  art.cod_articulo codart, art.descripcion descart, " +
+                    " pre.observacion obspre " +
+                    " FROM movimientos.prestamo pre " +
+                    " join movimientos.inventario inv using(serial) " +
+                    " join articulo art using(cod_articulo) " +
+                    " join estado_articulo edoart on (edoart.cod_estado_articulo=inv.cod_estado_articulo) " +
+                    " join proveedor pro using (cod_proveedor)"+
+                    " where salida_ingreso='false'"
+            );
+            rs = consulta.ejecutar(sql);
+            ArrayList<Prestamo> prestamosList = new ArrayList<>();
+            while (rs.next()) {
+                Prestamo p=new Prestamo();
+                p.setCodPrestamo(rs.getInt("codpre"));
+                p.setProveedor(new Proveedor(rs.getInt("codpro"), rs.getString("nompro"), null, null, null, null));
+                p.setEnPrestamo(rs.getBoolean("enprestamo"));
+                p.setFechaDevolucion(rs.getDate("fechdev"));
+                p.setInventario(new Inventario(rs.getString("serial"), null, null, null));
+                p.getInventario().setArticulo(new Articulo(rs.getInt("codart"), rs.getString("descart"), null, null));
+                p.getInventario().getArticulo().setEdoArticulo(new EstadoArticulo(rs.getInt("codedoart"), rs.getString("nomedoart")));
+                p.setObservacion(rs.getString("obspre"));                
+                
+                prestamosList.add(p);                
+            }
+            return prestamosList;
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (consulta != null) {
+                consulta.desconectar();
+            }
+        }
+    }
     
+    public Collection<? extends Prestamo> cargarPrestamoIngresoList() throws SQLException {
+        ResultSet rs = null;
+        Consulta consulta = null;
+        try {
+            consulta = new Consulta(this.conexion);
+            StringBuilder sql = new StringBuilder(
+                    " SELECT pre.cod_prestamo codpre, pro.cod_proveedor codpro, pro.nombre nompro, pre.en_prestamo enprestamo, pre.fecha_devolucion fechdev, " +
+                    " inv.serial serial, inv.cod_estado_articulo codedoart, edoart.nombre nomedoart,  art.cod_articulo codart, art.descripcion descart, " +
+                    " pre.observacion obspre " +
+                    " FROM movimientos.prestamo pre " +
+                    " join movimientos.inventario inv using(serial) " +
+                    " join articulo art using(cod_articulo) " +
+                    " join estado_articulo edoart on (edoart.cod_estado_articulo=inv.cod_estado_articulo) " +
+                    " join proveedor pro using (cod_proveedor)"+
+                    " where salida_ingreso='true'"
+            );
+            rs = consulta.ejecutar(sql);
+            ArrayList<Prestamo> prestamosList = new ArrayList<>();
+            while (rs.next()) {
+                Prestamo p=new Prestamo();
+                p.setCodPrestamo(rs.getInt("codpre"));
+                p.setProveedor(new Proveedor(rs.getInt("codpro"), rs.getString("nompro"), null, null, null, null));
+                p.setEnPrestamo(rs.getBoolean("enprestamo"));
+                p.setFechaDevolucion(rs.getDate("fechdev"));
+                p.setInventario(new Inventario(rs.getString("serial"), null, null, null));
+                p.getInventario().setArticulo(new Articulo(rs.getInt("codart"), rs.getString("descart"), null, null));
+                p.getInventario().getArticulo().setEdoArticulo(new EstadoArticulo(rs.getInt("codedoart"), rs.getString("nomedoart")));
+                p.setObservacion(rs.getString("obspre"));                
+                
+                prestamosList.add(p);                
+            }
+            return prestamosList;
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (consulta != null) {
+                consulta.desconectar();
+            }
+        }
+    }
+
+    public Collection<? extends Prestamo> cargarPrestamoTotales() throws SQLException {
+        ResultSet rs = null;
+        Consulta consulta = null;
+        try {
+            consulta = new Consulta(this.conexion);
+            StringBuilder sql = new StringBuilder(
+                    " SELECT pre.cod_prestamo codpre, pro.cod_proveedor codpro, pro.nombre nompro, pre.en_prestamo enprestamo, pre.fecha_devolucion fechdev, " +
+                    " inv.serial serial, pre.salida_ingreso salingpre, inv.cod_estado_articulo codedoart, edoart.nombre nomedoart,  art.cod_articulo codart, art.descripcion descart, " +
+                    " pre.observacion obspre " +
+                    " FROM movimientos.prestamo pre " +
+                    " join movimientos.inventario inv using(serial) " +
+                    " join articulo art using(cod_articulo) " +
+                    " join estado_articulo edoart on (edoart.cod_estado_articulo=inv.cod_estado_articulo) " +
+                    " join proveedor pro using (cod_proveedor)"                    
+            );
+            rs = consulta.ejecutar(sql);
+            ArrayList<Prestamo> prestamosList = new ArrayList<>();
+            while (rs.next()) {
+                Prestamo p=new Prestamo();
+                p.setCodPrestamo(rs.getInt("codpre"));
+                p.setProveedor(new Proveedor(rs.getInt("codpro"), rs.getString("nompro"), null, null, null, null));
+                p.setEnPrestamo(rs.getBoolean("enprestamo"));
+                p.setFechaDevolucion(rs.getDate("fechdev"));
+                p.setInventario(new Inventario(rs.getString("serial"), null, null, null));
+                p.getInventario().setArticulo(new Articulo(rs.getInt("codart"), rs.getString("descart"), null, null));
+                p.getInventario().getArticulo().setEdoArticulo(new EstadoArticulo(rs.getInt("codedoart"), rs.getString("nomedoart")));
+                p.setIngreso(rs.getBoolean("salingpre"));
+                p.setObservacion(rs.getString("obspre"));                
+                
+                prestamosList.add(p);                
+            }
+            return prestamosList;
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (consulta != null) {
+                consulta.desconectar();
+            }
+        }
+    }
+
+    public Collection<? extends Prestamo> cargarPrestamos(String condicion) throws SQLException {
+        ResultSet rs = null;
+        Consulta consulta = null;
+        try {
+            consulta = new Consulta(this.conexion);
+            StringBuilder sql = new StringBuilder(
+                    " SELECT pre.cod_prestamo codpre, pro.cod_proveedor codpro, pro.nombre nompro, pre.en_prestamo enprestamo, pre.fecha_devolucion fechdev, " +
+                    " inv.serial serial, pre.salida_ingreso salingpre, inv.cod_estado_articulo codedoart, edoart.nombre nomedoart,  art.cod_articulo codart, art.descripcion descart, " +
+                    " pre.observacion obspre " +
+                    " FROM movimientos.prestamo pre " +
+                    " join movimientos.inventario inv using(serial) " +
+                    " join articulo art using(cod_articulo) " +
+                    " join estado_articulo edoart on (edoart.cod_estado_articulo=inv.cod_estado_articulo) " +
+                    " join proveedor pro using (cod_proveedor) "+
+                    condicion
+                            
+            );
+            rs = consulta.ejecutar(sql);
+            ArrayList<Prestamo> prestamosList = new ArrayList<>();
+            while (rs.next()) {
+                Prestamo p=new Prestamo();
+                p.setCodPrestamo(rs.getInt("codpre"));
+                p.setProveedor(new Proveedor(rs.getInt("codpro"), rs.getString("nompro"), null, null, null, null));
+                p.setEnPrestamo(rs.getBoolean("enprestamo"));
+                p.setFechaDevolucion(rs.getDate("fechdev"));
+                p.setInventario(new Inventario(rs.getString("serial"), null, null, null));
+                p.getInventario().setArticulo(new Articulo(rs.getInt("codart"), rs.getString("descart"), null, null));
+                p.getInventario().getArticulo().setEdoArticulo(new EstadoArticulo(rs.getInt("codedoart"), rs.getString("nomedoart")));
+                p.setIngreso(rs.getBoolean("salingpre"));
+                p.setObservacion(rs.getString("obspre"));                
+                
+                prestamosList.add(p);                
+            }
+            return prestamosList;
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (consulta != null) {
+                consulta.desconectar();
+            }
+        }
+    }
 
     
 }
